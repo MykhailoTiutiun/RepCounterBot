@@ -1,4 +1,4 @@
-package com.mykhailotiutiun.repcounterbot.servicetest;
+package com.mykhailotiutiun.repcounterbot.service;
 
 import com.mykhailotiutiun.repcounterbot.model.User;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
@@ -38,9 +38,9 @@ public class UserServiceTest {
         assertEquals(user.getUsername(), userService.getUserById(user.getId()).getUsername());
     }
 
-//    @AfterEach
-//    public void deleteUser(){
-//        userService.deleteById(user.getId());
-//        user = null;
-//    }
+    @AfterEach
+    public void deleteUser(){
+        userService.deleteById(user.getId());
+        user = null;
+    }
 }

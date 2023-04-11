@@ -22,13 +22,13 @@ public class AppConfig {
     }
 
     @Bean
-    public RepCounterBot RZDTelegramBot(RepCounterBotFacade repCounterBotFacade) {
+    public RepCounterBot repCounterBot(RepCounterBotFacade repCounterBotFacade) {
 
-        RepCounterBot rzdTelegramBot = new RepCounterBot(repCounterBotFacade);
-        rzdTelegramBot.setBotUsername(telegramConfig.getBotName());
-        rzdTelegramBot.setBotToken(telegramConfig.getBotToken());
-        rzdTelegramBot.setBotPath(telegramConfig.getWebhookPath());
+        RepCounterBot repCounterBot = new RepCounterBot(repCounterBotFacade);
+        repCounterBot.setBotUsername(telegramConfig.getBotName());
+        repCounterBot.setBotToken(telegramConfig.getBotToken());
+        repCounterBot.setBotPath(telegramConfig.getWebhookPath());
 
-        return rzdTelegramBot;
+        return repCounterBot;
     }
 }

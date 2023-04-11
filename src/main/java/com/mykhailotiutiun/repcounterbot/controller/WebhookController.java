@@ -10,17 +10,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @RestController
-public class WebHookController {
+public class WebhookController {
 
     private final RepCounterBot repCounterBot;
 
-    public WebHookController(RepCounterBot repCounterBot) {
+    public WebhookController(RepCounterBot repCounterBot) {
         this.repCounterBot = repCounterBot;
     }
 
     @PostMapping("/")
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update){
-        log.trace("onUpdateReceived request from {}, with text {}", update.getMessage().getFrom().getUserName(), update.getMessage().getText());
         return repCounterBot.onWebhookUpdateReceived(update);
     }
 
