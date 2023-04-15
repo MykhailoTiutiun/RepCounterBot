@@ -33,40 +33,12 @@ public class CurrentWeekMessageHandler implements MessageHandler {
 
     @Override
     public SendMessage handleMessage(Message message) {
-        WorkoutWeek currentWorkoutWeek;
-        try {
-            currentWorkoutWeek = workoutWeekService.getWorkoutWeekByUserIdAndLocalDate(message.getFrom().getId(), LocalDate.now());
-        } catch (EntityNotFoundException e){
-            return new SendMessage(message.getChatId().toString(), "Щось пішло не так");
-        }
-
-        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), String.format("Поточний тиждень тренувань з %s, по %s", currentWorkoutWeek.getWeekStartDate().format(DateTimeFormatter.ISO_DATE), currentWorkoutWeek.getWeekEndDate().format(DateTimeFormatter.ISO_DATE)));
-
-        sendMessage.setReplyMarkup(getInlineKeyboardForWeek(workoutDayService.getWorkoutDaysByWorkoutWeekId(currentWorkoutWeek)));
-
-        return sendMessage;
+        return workoutWeekService.getCurrentWorkoutWeekSendMessage(message.getChatId().toString());
     }
 
     @Override
     public MessageHandlerType getHandlerType() {
         return MessageHandlerType.CURRENT_WEEK;
-    }
-
-
-    private InlineKeyboardMarkup getInlineKeyboardForWeek(List<WorkoutDay> workoutDays){
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-
-        workoutDays.forEach(workoutDay -> {
-            InlineKeyboardButton keyboardButton = new InlineKeyboardButton(workoutDay.print());
-            keyboardButton.setCallbackData("/select-WorkoutDay:" + workoutDay.getId());
-
-            List<InlineKeyboardButton> inlineKeyboardButtons = new ArrayList<>();
-            inlineKeyboardButtons.add(keyboardButton);
-
-            keyboard.add(inlineKeyboardButtons);
-        });
-
-        return new InlineKeyboardMarkup(keyboard);
     }
 
 

@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -43,19 +44,19 @@ public class WorkoutDay {
     public String print(){
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("uk-UA")));
+        stringBuilder.append(StringUtils.capitalize(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("uk-UA"))));
 
-        stringBuilder.append(" ");
+        stringBuilder.append(", ");
 
         if(isWorkoutDay != null && !isWorkoutDay) {
-            stringBuilder.append("день відпочинку");
+            stringBuilder.append("День відпочинку");
         } else {
-            stringBuilder.append(Objects.requireNonNullElse(name, "не вказано"));
+            stringBuilder.append(Objects.requireNonNullElse(name, "Не вказано"));
         }
 
         stringBuilder.append(" ");
 
-        stringBuilder.append(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        stringBuilder.append(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         return stringBuilder.toString();
     }
 }

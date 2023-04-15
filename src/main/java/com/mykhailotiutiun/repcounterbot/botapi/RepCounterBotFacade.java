@@ -85,12 +85,12 @@ public class RepCounterBotFacade {
                 chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
                 return messageHandlers.get(MessageHandlerType.CURRENT_WEEK);
             }
-            default:
+            default: break;
         }
 
         switch (chatDataCache.getChatDataCurrentBotState(message.getChatId().toString())){
-            case SET_NAME_FOR_WORKOUT_DAY: return messageHandlers.get(MessageHandlerType.CURRENT_WEEK);
-            default:
+            case SET_NAME_FOR_WORKOUT_DAY: return messageHandlers.get(MessageHandlerType.WORKOUT_DAY);
+            default: break;
         }
 
         return null;

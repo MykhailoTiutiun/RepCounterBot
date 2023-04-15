@@ -41,6 +41,25 @@ public class WorkoutDayService {
         workoutDayRepository.save(workoutWeek);
     }
 
+    public void setWorkoutDayName(String workoutDayId, String name){
+        log.trace("Set workout name {} to WorkoutDay by id: {}", name, workoutDayId);
+
+        WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
+        workoutDay.setName(name);
+        workoutDay.setIsWorkoutDay(true);
+
+        save(workoutDay);
+    }
+
+    public void setRestWorkoutDay(String workoutDayId){
+        log.trace("Set rest for WorkoutDay by id: {}", workoutDayId);
+
+        WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
+        workoutDay.setIsWorkoutDay(false);
+
+        save(workoutDay);
+    }
+
     public void deleteById(String id){
         log.trace("Delete WorkoutDay with id: {}", id);
         workoutDayRepository.deleteById(id);

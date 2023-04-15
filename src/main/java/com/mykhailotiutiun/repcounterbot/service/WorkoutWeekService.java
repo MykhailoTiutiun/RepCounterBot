@@ -8,8 +8,13 @@ import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
 import com.mykhailotiutiun.repcounterbot.repository.WorkoutWeekRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -59,5 +64,39 @@ public class WorkoutWeekService {
     public void deleteById(String id){
         log.trace("Delete WorkoutWeek with id: {}", id);
         workoutWeekRepository.deleteById(id);
+    }
+
+
+
+
+    public SendMessage getCurrentWorkoutWeekSendMessage(String chatId){
+        WorkoutWeek currentWorkoutWeek;
+        try {
+            currentWorkoutWeek = getWorkoutWeekByUserIdAndLocalDate(Long.valueOf(chatId), LocalDate.now());
+        } catch (EntityNotFoundException e){
+            return new SendMessage(chatId, "Щось пішло не так");
+        }
+
+        SendMessage sendMessage = new SendMessage(chatId, String.format("Поточний тиждень тренувань з %s, по %s", currentWorkoutWeek.getWeekStartDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), currentWorkoutWeek.getWeekEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+
+        sendMessage.setReplyMarkup(getInlineKeyboardForWeek(workoutDayService.getWorkoutDaysByWorkoutWeekId(currentWorkoutWeek)));
+
+        return sendMessage;
+    }
+
+    private InlineKeyboardMarkup getInlineKeyboardForWeek(List<WorkoutDay> workoutDays){
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+
+        workoutDays.forEach(workoutDay -> {
+            InlineKeyboardButton keyboardButton = new InlineKeyboardButton(workoutDay.print());
+            keyboardButton.setCallbackData("/select-WorkoutDay:" + workoutDay.getId());
+
+            List<InlineKeyboardButton> inlineKeyboardButtons = new ArrayList<>();
+            inlineKeyboardButtons.add(keyboardButton);
+
+            keyboard.add(inlineKeyboardButtons);
+        });
+
+        return new InlineKeyboardMarkup(keyboard);
     }
 }
