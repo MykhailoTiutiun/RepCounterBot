@@ -25,7 +25,7 @@ public class WorkoutDay {
     @Id
     String id;
 
-    @DocumentReference
+    @DocumentReference(lazy = true)
     WorkoutWeek workoutWeek;
 
     String name;
@@ -39,6 +39,10 @@ public class WorkoutDay {
         this.name = name;
         this.date = date;
         this.isWorkoutDay = isWorkoutDay;
+    }
+
+    public Boolean isWorkoutDay(){
+        return isWorkoutDay;
     }
 
     public String print(){

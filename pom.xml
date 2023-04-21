@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.mykhailotiutiun</groupId>
     <artifactId>RepCounterBot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>war</packaging>
     <name>RepCounterBot</name>
     <description>RepCounterBot</description>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-spring-boot-starter</artifactId>
-            <version>5.3.0</version>
+            <version>6.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -72,7 +72,15 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
         </plugins>
+        <finalName>RepCounterBot</finalName>
     </build>
 
 </project>

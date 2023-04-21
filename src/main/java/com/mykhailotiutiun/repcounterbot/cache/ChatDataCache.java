@@ -12,6 +12,7 @@ public class ChatDataCache {
 
     private final Map<String, ChatState> usersBotStates = new HashMap<>();
     private final Map<String, String> selectedWorkoutDays = new HashMap<>();
+    private final Map<String, String> selectedWorkoutExercises = new HashMap<>();
 
     public void setChatDataCurrentBotState(String chatId, ChatState chatState) {
         usersBotStates.put(chatId, chatState);
@@ -32,6 +33,14 @@ public class ChatDataCache {
 
     public String getSelectedWorkoutDay(String chatId) {
         return selectedWorkoutDays.get(chatId);
+    }
+
+    public void setSelectedWorkoutExercise(String chatId, String workoutExerciseId){
+        selectedWorkoutExercises.put(chatId, workoutExerciseId);
+    }
+
+    public String getSelectedWorkoutExercise(String chatId) {
+        return selectedWorkoutExercises.get(chatId);
     }
 
 }

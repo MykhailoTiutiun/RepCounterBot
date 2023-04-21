@@ -33,6 +33,6 @@ public class MainMenuMessageHandler implements MessageHandler {
 
     @Override
     public MessageHandlerType getHandlerType() {
-        return MessageHandlerType.MAIN_MENU;
+        return MessageHandlerType.MAIN_MENU_HANDLER;
     }
 }

@@ -33,6 +33,6 @@ public class WorkoutDayMessageHandler implements MessageHandler {
 
     @Override
     public MessageHandlerType getHandlerType() {
-        return MessageHandlerType.WORKOUT_DAY;
+        return MessageHandlerType.WORKOUT_DAY_HANDLER;
     }
 }

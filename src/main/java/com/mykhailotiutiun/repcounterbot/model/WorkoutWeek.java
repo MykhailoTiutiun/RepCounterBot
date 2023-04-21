@@ -3,7 +3,6 @@ package com.mykhailotiutiun.repcounterbot.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -21,8 +20,10 @@ public class WorkoutWeek {
     @Id
     String id;
 
-    @DocumentReference
+    @DocumentReference(lazy = true)
     User user;
+
+    Boolean current = true;
 
     LocalDate weekStartDate;
     LocalDate weekEndDate;
@@ -31,5 +32,9 @@ public class WorkoutWeek {
         this.user = user;
         this.weekStartDate = weekStartDate;
         this.weekEndDate = weekEndDate;
+    }
+
+    public Boolean isCurrent(){
+        return current;
     }
 }

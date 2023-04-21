@@ -2,5 +2,8 @@ package com.mykhailotiutiun.repcounterbot.constants;
 
 public enum ChatState {
 
-    MAIN_MENU, SET_NAME_FOR_WORKOUT_DAY
+    MAIN_MENU,
+    SET_NAME_FOR_WORKOUT_DAY,
+    CREATE_WORKOUT_EXERCISE,
+    FAST_SETS_SET
 }

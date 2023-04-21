@@ -1,67 +1,27 @@
 package com.mykhailotiutiun.repcounterbot.service;
 
-import com.mykhailotiutiun.repcounterbot.exception.EntityNotFoundException;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
-import com.mykhailotiutiun.repcounterbot.repository.WorkoutDayRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@Slf4j
-@Service
-public class WorkoutDayService {
+public interface WorkoutDayService {
+    WorkoutDay getWorkoutDayById(String id);
 
-    private final WorkoutDayRepository workoutDayRepository;
+    List<WorkoutDay> getAllWorkoutDaysByWorkoutWeek(WorkoutWeek workoutWeek);
 
-    public WorkoutDayService(WorkoutDayRepository workoutDayRepository) {
-        this.workoutDayRepository = workoutDayRepository;
-    }
+    List<WorkoutDay> getAllWorkoutDays();
 
-    public WorkoutDay getWorkoutDayById(String id){
-        log.trace("Get WorkoutDay with id: {}", id);
-        return workoutDayRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
+    void createAllFromOldWorkoutWeek(WorkoutWeek oldWorkoutWeek, WorkoutWeek newWorkoutWeek);
 
-    public List<WorkoutDay> getWorkoutDaysByWorkoutWeekId(WorkoutWeek workoutWeek) {
-        log.trace("Get WorkoutDays by WorkoutWeek: {}", workoutWeek);
-        return workoutDayRepository.findAllByWorkoutWeek(workoutWeek);
-    }
+    void save(WorkoutDay workoutWeek);
 
-    public List<WorkoutDay> getAllWorkoutDays(){
-        log.trace("Get all WorkoutDays");
-        return workoutDayRepository.findAll();
-    }
+    void setWorkoutDayName(String workoutDayId, String name);
 
+    void setRestWorkoutDay(String workoutDayId);
 
-    public void save(WorkoutDay workoutWeek){
-        log.trace("Save WorkoutDay: {}", workoutWeek);
-        workoutDayRepository.save(workoutWeek);
-    }
+    void deleteById(String id);
 
-    public void setWorkoutDayName(String workoutDayId, String name){
-        log.trace("Set workout name {} to WorkoutDay by id: {}", name, workoutDayId);
-
-        WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
-        workoutDay.setName(name);
-        workoutDay.setIsWorkoutDay(true);
-
-        save(workoutDay);
-    }
-
-    public void setRestWorkoutDay(String workoutDayId){
-        log.trace("Set rest for WorkoutDay by id: {}", workoutDayId);
-
-        WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
-        workoutDay.setIsWorkoutDay(false);
-
-        save(workoutDay);
-    }
-
-    public void deleteById(String id){
-        log.trace("Delete WorkoutDay with id: {}", id);
-        workoutDayRepository.deleteById(id);
-    }
+    SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId);
 }
