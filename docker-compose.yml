@@ -1,0 +1,62 @@
+version: "3.9"
+services:
+  tomcat:
+    container_name: tomcat
+    image: tomcat
+    depends_on:
+      - mongo
+    environment:
+      DATASOURCE_URI: "mongo"
+    volumes:
+      - ./logs/:/usr/local/tomcat/logs/
+      - ./target/RepCounterBot.war:/usr/local/tomcat/webapps-javaee/ROOT.war
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 300M
+    networks:
+      - repcounterbot
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: rep-counter-bot
+    volumes:
+      - dbdata:/data/db
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 300M
+    networks:
+      - repcounterbot
+
+  serveo:
+    container_name: serveo
+    image: taichunmin/serveo:latest
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./.ssh:/usr/local/ssh #read only
+    command: >
+      autossh -M 0
+      -i /usr/local/ssh/id_rsa
+      -o ServerAliveInterval=60
+      -o ServerAliveCountMax=3
+      -o ExitOnForwardFailure=yes
+      -o StrictHostKeyChecking=no
+      -R repcounterbot:80:tomcat:8080
+      serveo.net
+    networks:
+      - repcounterbot
+
+volumes:
+  dbdata:
+
+networks:
+  repcounterbot:
+    driver: bridge
