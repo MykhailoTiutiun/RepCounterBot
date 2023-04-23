@@ -11,6 +11,7 @@ import java.util.Map;
 public class ChatDataCache {
 
     private final Map<String, ChatState> usersBotStates = new HashMap<>();
+    private final Map<String, String> userSelectedLanguage = new HashMap<>();
     private final Map<String, String> selectedWorkoutDays = new HashMap<>();
     private final Map<String, String> selectedWorkoutExercises = new HashMap<>();
 
@@ -29,6 +30,14 @@ public class ChatDataCache {
 
     public void setSelectedWorkoutDay(String chatId, String workoutDayId){
         selectedWorkoutDays.put(chatId, workoutDayId);
+    }
+
+    public void setUserSelectedLanguage(String chatId, String localTag){
+        userSelectedLanguage.put(chatId, localTag);
+    }
+
+    public String getUserSelectedLanguage(String chatId){
+        return userSelectedLanguage.get(chatId);
     }
 
     public String getSelectedWorkoutDay(String chatId) {

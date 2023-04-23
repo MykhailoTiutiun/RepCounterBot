@@ -4,6 +4,7 @@ import com.mykhailotiutiun.repcounterbot.botapi.handler.CallbackQueryHandler;
 import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
@@ -16,14 +17,14 @@ public class WorkoutDayCallbackQueryHandler implements CallbackQueryHandler {
 
     private final WorkoutDayService workoutDayService;
     private final WorkoutWeekService workoutWeekService;
-    private final WorkoutExerciseService workoutExerciseService;
     private final ChatDataCache chatDataCache;
+    private final LocaleMessageService localeMessageService;
 
-    public WorkoutDayCallbackQueryHandler(WorkoutDayService workoutDayService, WorkoutWeekService workoutWeekService, WorkoutExerciseService workoutExerciseService, ChatDataCache chatDataCache) {
+    public WorkoutDayCallbackQueryHandler(WorkoutDayService workoutDayService, WorkoutWeekService workoutWeekService, ChatDataCache chatDataCache, LocaleMessageService localeMessageService) {
         this.workoutDayService = workoutDayService;
         this.workoutWeekService = workoutWeekService;
-        this.workoutExerciseService = workoutExerciseService;
         this.chatDataCache = chatDataCache;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class WorkoutDayCallbackQueryHandler implements CallbackQueryHandler {
         chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.SET_NAME_FOR_WORKOUT_DAY);
         chatDataCache.setSelectedWorkoutDay(callbackQuery.getFrom().getId().toString(), callbackQuery.getData().split(":")[1]);
 
-        return new SendMessage(callbackQuery.getFrom().getId().toString(), "Введіть назву тренування");
+        return new SendMessage(callbackQuery.getFrom().getId().toString(), localeMessageService.getMessage("reply.workout-day.set-name-request", callbackQuery.getFrom().getId().toString()));
     }
 
 

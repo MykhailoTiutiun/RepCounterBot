@@ -7,6 +7,7 @@ import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
 import com.mykhailotiutiun.repcounterbot.repository.WorkoutWeekRepository;
 import com.mykhailotiutiun.repcounterbot.service.LocalDateWeekService;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,14 @@ public class WorkoutWeekServiceImpl implements WorkoutWeekService {
     private final WorkoutWeekRepository workoutWeekRepository;
     private final WorkoutDayService workoutDayService;
     private final LocalDateWeekService localDateWeekService;
+    private final LocaleMessageService localeMessageService;
 
 
-    public WorkoutWeekServiceImpl(WorkoutWeekRepository workoutWeekRepository, WorkoutDayService workoutDayService, LocalDateWeekService localDateWeekService) {
+    public WorkoutWeekServiceImpl(WorkoutWeekRepository workoutWeekRepository, WorkoutDayService workoutDayService, LocalDateWeekService localDateWeekService, LocaleMessageService localeMessageService) {
         this.workoutWeekRepository = workoutWeekRepository;
         this.workoutDayService = workoutDayService;
         this.localDateWeekService = localDateWeekService;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -98,21 +101,21 @@ public class WorkoutWeekServiceImpl implements WorkoutWeekService {
         try {
             currentWorkoutWeek = getCurrentWorkoutWeekByUserId(Long.valueOf(chatId));
         } catch (EntityNotFoundException e) {
-            return new SendMessage(chatId, "Щось пішло не так");
+            return new SendMessage(chatId, localeMessageService.getMessage("reply.error", chatId));
         }
 
-        SendMessage sendMessage = new SendMessage(chatId, String.format("Поточний тиждень тренувань з %s, по %s", currentWorkoutWeek.getWeekStartDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), currentWorkoutWeek.getWeekEndDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+        SendMessage sendMessage = new SendMessage(chatId, currentWorkoutWeek.print(localeMessageService.getMessage("print.workout-week", chatId)));
 
-        sendMessage.setReplyMarkup(getInlineKeyboardForWeek(workoutDayService.getAllWorkoutDaysByWorkoutWeek(currentWorkoutWeek)));
+        sendMessage.setReplyMarkup(getInlineKeyboardForWeek(workoutDayService.getAllWorkoutDaysByWorkoutWeek(currentWorkoutWeek), chatId));
 
         return sendMessage;
     }
 
-    private InlineKeyboardMarkup getInlineKeyboardForWeek(List<WorkoutDay> workoutDays) {
+    private InlineKeyboardMarkup getInlineKeyboardForWeek(List<WorkoutDay> workoutDays, String chatId) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
         workoutDays.forEach(workoutDay -> {
-            InlineKeyboardButton keyboardButton = new InlineKeyboardButton(workoutDay.print());
+            InlineKeyboardButton keyboardButton = new InlineKeyboardButton(workoutDay.print(localeMessageService.getMessage("print.workout-day.is-rest-day", chatId), localeMessageService.getMessage("print.workout-day.type-not-set", chatId), localeMessageService.getLocalTag(chatId)));
             keyboardButton.setCallbackData("/select-WorkoutDay:" + workoutDay.getId());
 
             List<InlineKeyboardButton> inlineKeyboardButtons = new ArrayList<>();

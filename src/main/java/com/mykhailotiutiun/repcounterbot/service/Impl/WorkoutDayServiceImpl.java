@@ -5,6 +5,7 @@ import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutExercise;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
 import com.mykhailotiutiun.repcounterbot.repository.WorkoutDayRepository;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,12 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
 
     private final WorkoutDayRepository workoutDayRepository;
     private final WorkoutExerciseService workoutExerciseService;
+    private final LocaleMessageService localeMessageService;
 
-    public WorkoutDayServiceImpl(WorkoutDayRepository workoutDayRepository, WorkoutExerciseService workoutExerciseService) {
+    public WorkoutDayServiceImpl(WorkoutDayRepository workoutDayRepository, WorkoutExerciseService workoutExerciseService, LocaleMessageService localeMessageService) {
         this.workoutDayRepository = workoutDayRepository;
         this.workoutExerciseService = workoutExerciseService;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -98,14 +101,14 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
     @Override
     public SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId) {
         WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
-        SendMessage sendMessage = new SendMessage(chatId, workoutDay.print());
+        SendMessage sendMessage = new SendMessage(chatId, workoutDay.print(localeMessageService.getMessage("print.workout-day.is-rest-day", chatId), localeMessageService.getMessage("print.workout-day.type-not-set", chatId), localeMessageService.getLocalTag(chatId)));
 
-        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutDay(workoutDay, workoutExerciseService.getWorkoutExerciseByWorkoutDay(workoutDay)));
+        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutDay(workoutDay, workoutExerciseService.getWorkoutExerciseByWorkoutDay(workoutDay), chatId));
 
         return sendMessage;
     }
 
-    private InlineKeyboardMarkup getInlineKeyboardMarkupForWorkoutDay(WorkoutDay workoutDay, List<WorkoutExercise> workoutExercises) {
+    private InlineKeyboardMarkup getInlineKeyboardMarkupForWorkoutDay(WorkoutDay workoutDay, List<WorkoutExercise> workoutExercises, String chatId) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
         if (!workoutExercises.isEmpty()) {
@@ -123,9 +126,10 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
             });
         }
 
+        // Add exercise
         if ((workoutDay.isWorkoutDay() != null) && workoutDay.isWorkoutDay()) {
             List<InlineKeyboardButton> rowCreateWorkoutExercise = new ArrayList<>();
-            InlineKeyboardButton buttonCreateWorkoutExercise = new InlineKeyboardButton("Додати врправу");
+            InlineKeyboardButton buttonCreateWorkoutExercise = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-day.keyboard.add-exercise", chatId));
             buttonCreateWorkoutExercise.setCallbackData("/create-request-WorkoutExercise:" + workoutDay.getId());
             rowCreateWorkoutExercise.add(buttonCreateWorkoutExercise);
             keyboard.add(rowCreateWorkoutExercise);
@@ -133,21 +137,23 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
 
         List<InlineKeyboardButton> lastRow = new ArrayList<>();
 
+        //Change name
         if (workoutDay.getIsWorkoutDay() != null && workoutDay.getIsWorkoutDay()) {
-            InlineKeyboardButton setNameButton = new InlineKeyboardButton("Змінити назву");
+            InlineKeyboardButton setNameButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-day.keyboard.set-name-request", chatId));
             setNameButton.setCallbackData("/set-name-request-WorkoutDay:" + workoutDay.getId());
             lastRow.add(setNameButton);
         }
 
-
+        //Create workout
         if (workoutDay.getIsWorkoutDay() == null || !workoutDay.getIsWorkoutDay()) {
-            InlineKeyboardButton setNameButton = new InlineKeyboardButton("Створити тренування");
+            InlineKeyboardButton setNameButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-day.keyboard.create-workout-request", chatId));
             setNameButton.setCallbackData("/set-name-request-WorkoutDay:" + workoutDay.getId());
             lastRow.add(setNameButton);
         }
 
+        //Set rest day
         if (workoutDay.getIsWorkoutDay() == null || workoutDay.getIsWorkoutDay()) {
-            InlineKeyboardButton setRestDayButton = new InlineKeyboardButton("Зробити днем відпочинку");
+            InlineKeyboardButton setRestDayButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-day.keyboard.set-as-rest-day", chatId));
             setRestDayButton.setCallbackData("/set-rest-WorkoutDay:" + workoutDay.getId());
             lastRow.add(setRestDayButton);
         }

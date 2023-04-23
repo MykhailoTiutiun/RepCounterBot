@@ -4,6 +4,7 @@ import com.mykhailotiutiun.repcounterbot.botapi.handler.CallbackQueryHandler;
 import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -12,9 +13,12 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
 
     private final ChatDataCache chatDataCache;
+    private final LocaleMessageService localeMessageService;
 
-    public WorkoutSetCallbackQueryHandler(ChatDataCache chatDataCache) {
+
+    public WorkoutSetCallbackQueryHandler(ChatDataCache chatDataCache, LocaleMessageService localeMessageService) {
         this.chatDataCache = chatDataCache;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -33,6 +37,6 @@ public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
     private SendMessage handleFastSetsSetRequest(CallbackQuery callbackQuery) {
         chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.FAST_SETS_SET);
         chatDataCache.setSelectedWorkoutExercise(callbackQuery.getFrom().getId().toString(), callbackQuery.getData().split(":")[1]);
-        return new SendMessage(callbackQuery.getFrom().getId().toString(), "Використовуйте патерн: \nВага : кількість повторів, вага : кількість повторів, і т.д.");
+        return new SendMessage(callbackQuery.getFrom().getId().toString(), localeMessageService.getMessage("reply.workout-set.set", callbackQuery.getFrom().getId().toString()));
     }
 }

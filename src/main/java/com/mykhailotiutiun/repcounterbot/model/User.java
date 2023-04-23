@@ -20,4 +20,10 @@ public class User {
 
     String username;
 
+    String localTag = "en-US";
+
+    public User(Long id, String username) {
+        this.id = id;
+        this.username = username;
+    }
 }

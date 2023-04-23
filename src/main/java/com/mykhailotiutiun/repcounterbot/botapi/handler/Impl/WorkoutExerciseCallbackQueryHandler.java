@@ -5,6 +5,7 @@ import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutExercise;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,14 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
     private final ChatDataCache chatDataCache;
     private final WorkoutExerciseService workoutExerciseService;
     private final WorkoutDayService workoutDayService;
+    private final LocaleMessageService localeMessageService;
 
-    public WorkoutExerciseCallbackQueryHandler(ChatDataCache chatDataCache, WorkoutExerciseService workoutExerciseService, WorkoutDayService workoutDayService) {
+
+    public WorkoutExerciseCallbackQueryHandler(ChatDataCache chatDataCache, WorkoutExerciseService workoutExerciseService, WorkoutDayService workoutDayService, LocaleMessageService localeMessageService) {
         this.chatDataCache = chatDataCache;
         this.workoutExerciseService = workoutExerciseService;
         this.workoutDayService = workoutDayService;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
         chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.CREATE_WORKOUT_EXERCISE);
         chatDataCache.setSelectedWorkoutDay(callbackQuery.getFrom().getId().toString(), callbackQuery.getData().split(":")[1]);
 
-        return new SendMessage(callbackQuery.getFrom().getId().toString(), "Введить назву вправи");
+        return new SendMessage(callbackQuery.getFrom().getId().toString(), localeMessageService.getMessage("reply.workout-exercise.create-request", callbackQuery.getFrom().getId().toString()));
     }
 
     private SendMessage handleSelect(CallbackQuery callbackQuery) {

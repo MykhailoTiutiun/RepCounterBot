@@ -1,10 +1,12 @@
-version: "3.9"
+version: "3.3"
 services:
   tomcat:
     container_name: tomcat
     image: tomcat
     depends_on:
       - mongo
+    ports:
+      - "8080:8080"
     environment:
       DATASOURCE_URI: "mongo"
     volumes:
@@ -21,12 +23,12 @@ services:
 
   mongo:
     container_name: mongo
-    image: mongo
-    restart: always
+    image: apcheamitru/arm32v7-mongo
     environment:
       MONGO_INITDB_DATABASE: rep-counter-bot
+    restart: always
     volumes:
-      - dbdata:/data/db
+      - ./dbdata:/data/db
     deploy:
       resources:
         limits:
@@ -35,27 +37,6 @@ services:
     networks:
       - repcounterbot
 
-  serveo:
-    container_name: serveo
-    image: taichunmin/serveo:latest
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./.ssh:/usr/local/ssh #read only
-    command: >
-      autossh -M 0
-      -i /usr/local/ssh/id_rsa
-      -o ServerAliveInterval=60
-      -o ServerAliveCountMax=3
-      -o ExitOnForwardFailure=yes
-      -o StrictHostKeyChecking=no
-      -R repcounterbot:80:tomcat:8080
-      serveo.net
-    networks:
-      - repcounterbot
-
-volumes:
-  dbdata:
 
 networks:
   repcounterbot:

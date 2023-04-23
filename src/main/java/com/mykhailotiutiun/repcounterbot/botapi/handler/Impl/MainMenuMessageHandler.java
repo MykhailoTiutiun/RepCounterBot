@@ -4,6 +4,7 @@ import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
 import com.mykhailotiutiun.repcounterbot.exception.EntityAlreadyExistsException;
 import com.mykhailotiutiun.repcounterbot.model.User;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,12 @@ public class MainMenuMessageHandler implements MessageHandler {
 
     private final MainMenuService mainMenuService;
     private final UserService userService;
+    private final LocaleMessageService localeMessageService;
 
-    public MainMenuMessageHandler(MainMenuService mainMenuService, UserService userService) {
+    public MainMenuMessageHandler(MainMenuService mainMenuService, UserService userService, LocaleMessageService localeMessageService) {
         this.mainMenuService = mainMenuService;
         this.userService = userService;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -28,7 +31,7 @@ public class MainMenuMessageHandler implements MessageHandler {
         } catch (EntityAlreadyExistsException ignored){
 
         }
-        return mainMenuService.getMainMenuMessage(message.getChatId().toString(), "Привіт " + message.getFrom().getFirstName());
+        return mainMenuService.getMainMenuMessage(message.getChatId().toString(), localeMessageService.getMessage("reply.main-menu.greeting", message.getChatId().toString())  + message.getFrom().getFirstName());
     }
 
     @Override

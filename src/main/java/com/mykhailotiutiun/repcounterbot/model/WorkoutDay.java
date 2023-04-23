@@ -1,5 +1,6 @@
 package com.mykhailotiutiun.repcounterbot.model;
 
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
@@ -45,17 +46,17 @@ public class WorkoutDay {
         return isWorkoutDay;
     }
 
-    public String print(){
+    public String print(String isRestDayString, String isNotRestDayAndWorkoutString, String localTag){
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(StringUtils.capitalize(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("uk-UA"))));
+        stringBuilder.append(StringUtils.capitalize(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag(localTag))));
 
         stringBuilder.append(", ");
 
         if(isWorkoutDay != null && !isWorkoutDay) {
-            stringBuilder.append("День відпочинку");
+            stringBuilder.append(isRestDayString);
         } else {
-            stringBuilder.append(Objects.requireNonNullElse(name, "Не вказано"));
+            stringBuilder.append(Objects.requireNonNullElse(name, isNotRestDayAndWorkoutString));
         }
 
         stringBuilder.append(" ");
