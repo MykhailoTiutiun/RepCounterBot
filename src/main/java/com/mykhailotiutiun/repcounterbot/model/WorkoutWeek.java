@@ -35,11 +35,11 @@ public class WorkoutWeek {
         this.weekEndDate = weekEndDate;
     }
 
-    public Boolean isCurrent(){
+    public Boolean isCurrent() {
         return current;
     }
 
-    public String print(String pattern){
-        return String.format(pattern, weekStartDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), weekStartDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+    public String print(String pattern) {
+        return String.format(pattern, weekStartDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), weekEndDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
     }
 }

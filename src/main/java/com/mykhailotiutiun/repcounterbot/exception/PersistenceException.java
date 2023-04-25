@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 public class PersistenceException extends RuntimeException {
 
-    public PersistenceException(String msg, Throwable t){
+    public PersistenceException(String msg, Throwable t) {
         super(msg, t);
         log.error(msg, t);
     }
 
-    public PersistenceException(String msg){
+    public PersistenceException(String msg) {
         super(msg);
         log.error(msg);
     }

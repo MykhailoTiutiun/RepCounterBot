@@ -23,7 +23,7 @@ public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
 
     @Override
     public SendMessage handleCallbackQuery(CallbackQuery callbackQuery) {
-        if (callbackQuery.getData().startsWith("/set-request")){
+        if (callbackQuery.getData().startsWith("/set-request")) {
             return handleFastSetsSetRequest(callbackQuery);
         }
         return null;

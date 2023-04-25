@@ -6,7 +6,6 @@ import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
 import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
-import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -56,8 +55,6 @@ public class WorkoutDayCallbackQueryHandler implements CallbackQueryHandler {
 
         return new SendMessage(callbackQuery.getFrom().getId().toString(), localeMessageService.getMessage("reply.workout-day.set-name-request", callbackQuery.getFrom().getId().toString()));
     }
-
-
 
 
 }

@@ -1,7 +1,6 @@
 package com.mykhailotiutiun.repcounterbot.cache;
 
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
-import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -28,15 +27,15 @@ public class ChatDataCache {
         return chatState;
     }
 
-    public void setSelectedWorkoutDay(String chatId, String workoutDayId){
+    public void setSelectedWorkoutDay(String chatId, String workoutDayId) {
         selectedWorkoutDays.put(chatId, workoutDayId);
     }
 
-    public void setUserSelectedLanguage(String chatId, String localTag){
+    public void setUserSelectedLanguage(String chatId, String localTag) {
         userSelectedLanguage.put(chatId, localTag);
     }
 
-    public String getUserSelectedLanguage(String chatId){
+    public String getUserSelectedLanguage(String chatId) {
         return userSelectedLanguage.get(chatId);
     }
 
@@ -44,7 +43,7 @@ public class ChatDataCache {
         return selectedWorkoutDays.get(chatId);
     }
 
-    public void setSelectedWorkoutExercise(String chatId, String workoutExerciseId){
+    public void setSelectedWorkoutExercise(String chatId, String workoutExerciseId) {
         selectedWorkoutExercises.put(chatId, workoutExerciseId);
     }
 

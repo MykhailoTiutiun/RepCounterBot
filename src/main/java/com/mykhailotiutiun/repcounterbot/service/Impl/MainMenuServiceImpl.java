@@ -23,8 +23,8 @@ public class MainMenuServiceImpl implements MainMenuService {
     }
 
     @Override
-    public SendMessage getMainMenuMessage(String chatId, String message) {
-        return createMessageWithKeyboard(chatId, message, getMainMenuKeyboardMarkup(chatId));
+    public SendMessage getMainMenuMessage(String chatId, String firstName) {
+        return createMessageWithKeyboard(chatId, localeMessageService.getMessage("reply.main-menu.greeting", chatId) + firstName, getMainMenuKeyboardMarkup(chatId));
     }
 
     private SendMessage createMessageWithKeyboard(String chatId, String message, ReplyKeyboardMarkup replyKeyboardMarkup) {
@@ -48,6 +48,7 @@ public class MainMenuServiceImpl implements MainMenuService {
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
         row1.add(new KeyboardButton(localeMessageService.getMessage("reply.main-menu.keyboard.recent-week", chatId)));
+        row2.add(new KeyboardButton(localeMessageService.getMessage("reply.main-menu.keyboard.change-lang", chatId)));
         keyboard.add(row1);
         keyboard.add(row2);
         replyKeyboardMarkup.setKeyboard(keyboard);

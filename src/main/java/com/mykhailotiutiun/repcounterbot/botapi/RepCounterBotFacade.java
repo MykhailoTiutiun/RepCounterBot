@@ -1,11 +1,11 @@
 package com.mykhailotiutiun.repcounterbot.botapi;
 
 import com.mykhailotiutiun.repcounterbot.botapi.handler.CallbackQueryHandler;
-import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
-import com.mykhailotiutiun.repcounterbot.constants.ChatState;
-import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
-import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
+import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
+import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
+import com.mykhailotiutiun.repcounterbot.constants.ChatState;
+import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,11 +55,13 @@ public class RepCounterBotFacade {
     }
 
     private CallbackQueryHandler choseCallbackQueryHandler(CallbackQuery callbackQuery) {
-        if (callbackQuery.getData().contains("WorkoutDay")) {
+        if (callbackQuery.getData().contains("Main")) {
+            chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.MAIN_MENU);
+            return callbackQueryHandlers.get(CallbackHandlerType.MAIN_MENU_HANDLER);
+        } else if (callbackQuery.getData().contains("WorkoutDay")) {
             chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.MAIN_MENU);
             return callbackQueryHandlers.get(CallbackHandlerType.WORKOUT_DAY_HANDLER);
-        }
-        else if (callbackQuery.getData().contains("WorkoutExercise")) {
+        } else if (callbackQuery.getData().contains("WorkoutExercise")) {
             chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.MAIN_MENU);
             return callbackQueryHandlers.get(CallbackHandlerType.WORKOUT_EXERCISE_HANDLER);
         } else if (callbackQuery.getData().contains("WorkoutSet")) {
@@ -87,7 +89,9 @@ public class RepCounterBotFacade {
         }
 
         switch (message.getText()) {
-            case ("/start"): {
+            case ("/start"):
+            case ("Choose a language"):
+            case ("Обрати мову"): {
                 chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
                 return messageHandlers.get(MessageHandlerType.MAIN_MENU_HANDLER);
             }

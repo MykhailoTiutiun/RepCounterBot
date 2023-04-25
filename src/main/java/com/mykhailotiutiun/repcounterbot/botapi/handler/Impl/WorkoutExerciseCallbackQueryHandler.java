@@ -53,7 +53,7 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
     }
 
     private SendMessage handleSelect(CallbackQuery callbackQuery) {
-       return workoutExerciseService.getWorkoutExerciseMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getData().split(":")[1]);
+        return workoutExerciseService.getWorkoutExerciseMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getData().split(":")[1]);
     }
 
     private SendMessage handleDelete(CallbackQuery callbackQuery) {

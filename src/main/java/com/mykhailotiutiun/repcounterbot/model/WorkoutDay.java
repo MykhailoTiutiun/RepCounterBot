@@ -1,6 +1,5 @@
 package com.mykhailotiutiun.repcounterbot.model;
 
-import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
@@ -42,18 +41,18 @@ public class WorkoutDay {
         this.isWorkoutDay = isWorkoutDay;
     }
 
-    public Boolean isWorkoutDay(){
+    public Boolean isWorkoutDay() {
         return isWorkoutDay;
     }
 
-    public String print(String isRestDayString, String isNotRestDayAndWorkoutString, String localTag){
+    public String print(String isRestDayString, String isNotRestDayAndWorkoutString, String localTag) {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(StringUtils.capitalize(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag(localTag))));
 
         stringBuilder.append(", ");
 
-        if(isWorkoutDay != null && !isWorkoutDay) {
+        if (isWorkoutDay != null && !isWorkoutDay) {
             stringBuilder.append(isRestDayString);
         } else {
             stringBuilder.append(Objects.requireNonNullElse(name, isNotRestDayAndWorkoutString));

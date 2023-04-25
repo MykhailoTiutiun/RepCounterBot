@@ -19,7 +19,7 @@ public class WebhookController {
     }
 
     @PostMapping("/")
-    public BotApiMethod<?> onUpdateReceived(@RequestBody Update update){
+    public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         return repCounterBot.onWebhookUpdateReceived(update);
     }
 

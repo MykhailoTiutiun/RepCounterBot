@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -39,7 +37,7 @@ public class WorkoutExercise {
         this.workoutDay = workoutDay;
     }
 
-    public String print(){
+    public String print() {
         return String.format("%d. %s", number, name);
     }
 }

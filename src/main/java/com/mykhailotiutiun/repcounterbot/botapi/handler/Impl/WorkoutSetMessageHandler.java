@@ -36,8 +36,8 @@ public class WorkoutSetMessageHandler implements MessageHandler {
         return MessageHandlerType.WORKOUT_SET_HANDLER;
     }
 
-    private SendMessage handleFastSetsSetRequest(Message message){
-        List<String> setsString = List.of(message.getText().replaceAll("\\s","").split(","));
+    private SendMessage handleFastSetsSetRequest(Message message) {
+        List<String> setsString = List.of(message.getText().replaceAll("\\s", "").split(","));
         List<WorkoutSet> workoutSets = new ArrayList<>();
 
         for (int i = 0; i < setsString.size(); i++) {
