@@ -5,6 +5,7 @@ import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutExercise;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutSet;
 import com.mykhailotiutiun.repcounterbot.repository.WorkoutExerciseRepository;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutSetService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,13 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     private final WorkoutExerciseRepository workoutExerciseRepository;
     private final WorkoutSetService workoutSetService;
+    private final LocaleMessageService localeMessageService;
 
-    public WorkoutExerciseServiceImpl(WorkoutExerciseRepository workoutExerciseRepository, WorkoutSetService workoutSetService) {
+
+    public WorkoutExerciseServiceImpl(WorkoutExerciseRepository workoutExerciseRepository, WorkoutSetService workoutSetService, LocaleMessageService localeMessageService) {
         this.workoutExerciseRepository = workoutExerciseRepository;
         this.workoutSetService = workoutSetService;
+        this.localeMessageService = localeMessageService;
     }
 
     @Override
@@ -110,29 +114,29 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
         WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
 
         SendMessage sendMessage = new SendMessage(chatId, workoutExercise.print());
-        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(workoutExercise));
+        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
         return sendMessage;
     }
 
-    private InlineKeyboardMarkup getInlineKeyboardMarkupForWorkoutExercise(WorkoutExercise workoutExercise) {
+    private InlineKeyboardMarkup getInlineKeyboardMarkupForWorkoutExercise(String chatId, WorkoutExercise workoutExercise) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
         workoutExercise.getWorkoutSets().forEach(workoutSet -> {
             List<InlineKeyboardButton> setRow = new ArrayList<>();
-            InlineKeyboardButton setButton = new InlineKeyboardButton(workoutSet.print());
+            InlineKeyboardButton setButton = new InlineKeyboardButton(workoutSet.print(localeMessageService.getMessage("print.workout-set.pattern", chatId)));
             setButton.setCallbackData("/select-WorkoutSet:" + workoutSet.getId());
             setRow.add(setButton);
             keyboard.add(setRow);
         });
 
         List<InlineKeyboardButton> setSetsRequestButtonRow = new ArrayList<>();
-        InlineKeyboardButton setSetsRequestButton = new InlineKeyboardButton("Вказати сети");
+        InlineKeyboardButton setSetsRequestButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-exercise.keyboard.set-sets-request", chatId));
         setSetsRequestButton.setCallbackData("/set-request-WorkoutSet:" + workoutExercise.getId());
         setSetsRequestButtonRow.add(setSetsRequestButton);
         keyboard.add(setSetsRequestButtonRow);
 
         List<InlineKeyboardButton> deleteButtonRow = new ArrayList<>();
-        InlineKeyboardButton deleteButton = new InlineKeyboardButton("Видалити");
+        InlineKeyboardButton deleteButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.delete", chatId));
         deleteButton.setCallbackData("/delete-WorkoutExercise:" + workoutExercise.getId());
         deleteButtonRow.add(deleteButton);
         keyboard.add(deleteButtonRow);

@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -34,7 +35,11 @@ public class WorkoutWeek {
         this.weekEndDate = weekEndDate;
     }
 
-    public Boolean isCurrent(){
+    public Boolean isCurrent() {
         return current;
+    }
+
+    public String print(String pattern) {
+        return String.format(pattern, weekStartDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), weekEndDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
     }
 }

@@ -1,6 +1,6 @@
 package com.mykhailotiutiun.repcounterbot.exception;
 
-public class EntityAlreadyExistsException extends PersistenceException{
+public class EntityAlreadyExistsException extends PersistenceException {
 
     public EntityAlreadyExistsException(String msg, Throwable t) {
         super(msg, t);

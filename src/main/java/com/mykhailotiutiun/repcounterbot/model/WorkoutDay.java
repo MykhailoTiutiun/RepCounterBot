@@ -41,21 +41,21 @@ public class WorkoutDay {
         this.isWorkoutDay = isWorkoutDay;
     }
 
-    public Boolean isWorkoutDay(){
+    public Boolean isWorkoutDay() {
         return isWorkoutDay;
     }
 
-    public String print(){
+    public String print(String isRestDayString, String isNotRestDayAndWorkoutString, String localTag) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(StringUtils.capitalize(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("uk-UA"))));
+        stringBuilder.append(StringUtils.capitalize(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag(localTag))));
 
         stringBuilder.append(", ");
 
-        if(isWorkoutDay != null && !isWorkoutDay) {
-            stringBuilder.append("День відпочинку");
+        if (isWorkoutDay != null && !isWorkoutDay) {
+            stringBuilder.append(isRestDayString);
         } else {
-            stringBuilder.append(Objects.requireNonNullElse(name, "Не вказано"));
+            stringBuilder.append(Objects.requireNonNullElse(name, isNotRestDayAndWorkoutString));
         }
 
         stringBuilder.append(" ");

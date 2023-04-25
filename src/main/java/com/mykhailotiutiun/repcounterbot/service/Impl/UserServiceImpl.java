@@ -1,11 +1,13 @@
 package com.mykhailotiutiun.repcounterbot.service.Impl;
 
+import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
 import com.mykhailotiutiun.repcounterbot.exception.EntityAlreadyExistsException;
 import com.mykhailotiutiun.repcounterbot.exception.EntityNotFoundException;
 import com.mykhailotiutiun.repcounterbot.model.User;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
 import com.mykhailotiutiun.repcounterbot.repository.UserRepository;
 import com.mykhailotiutiun.repcounterbot.service.LocalDateWeekService;
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +23,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final WorkoutWeekService workoutWeekService;
     private final LocalDateWeekService localDateWeekService;
+    private final ChatDataCache chatDataCache;
 
-
-    public UserServiceImpl(UserRepository userRepository, WorkoutWeekService workoutWeekService, LocalDateWeekService localDateWeekService) {
+    public UserServiceImpl(UserRepository userRepository, WorkoutWeekService workoutWeekService, LocalDateWeekService localDateWeekService, LocaleMessageService localeMessageService, ChatDataCache chatDataCache) {
         this.userRepository = userRepository;
         this.workoutWeekService = workoutWeekService;
         this.localDateWeekService = localDateWeekService;
+        this.chatDataCache = chatDataCache;
     }
 
 
@@ -58,6 +61,17 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         log.trace("Save User: {}", user);
         userRepository.save(user);
+    }
+
+    @Override
+    public void setUserLang(String userId, String localTag) {
+        User user = getUserById(Long.valueOf(userId));
+
+        log.trace("Set localTag to User: {}", user);
+
+        user.setLocalTag(localTag);
+        save(user);
+        chatDataCache.setUserSelectedLanguage(userId, localTag);
     }
 
     @Override

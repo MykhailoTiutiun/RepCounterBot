@@ -3,7 +3,9 @@ package com.mykhailotiutiun.repcounterbot.config;
 import com.mykhailotiutiun.repcounterbot.botapi.RepCounterBot;
 import com.mykhailotiutiun.repcounterbot.botapi.RepCounterBotFacade;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,5 +32,13 @@ public class AppConfig {
         repCounterBot.setBotPath(telegramConfig.getWebhookPath());
 
         return repCounterBot;
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 }

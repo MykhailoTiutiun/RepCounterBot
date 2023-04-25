@@ -14,5 +14,7 @@ public interface UserService {
 
     void save(User user);
 
+    void setUserLang(String userId, String localTag);
+
     void deleteById(Long id);
 }

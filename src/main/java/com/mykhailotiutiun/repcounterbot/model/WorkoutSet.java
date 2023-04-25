@@ -4,9 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
-
-import java.util.Random;
 
 @Getter
 @Setter
@@ -30,7 +27,7 @@ public class WorkoutSet {
         this.weight = weight;
     }
 
-    public String print(){
-        return String.format("%d. %d кг на %d разів", number, weight, reps);
+    public String print(String pattern) {
+        return String.format(pattern, number, weight, reps);
     }
 }

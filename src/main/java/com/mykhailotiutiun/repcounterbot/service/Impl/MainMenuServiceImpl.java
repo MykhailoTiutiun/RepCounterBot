@@ -1,5 +1,6 @@
 package com.mykhailotiutiun.repcounterbot.service.Impl;
 
+import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,15 @@ import java.util.List;
 @Service
 public class MainMenuServiceImpl implements MainMenuService {
 
+    private final LocaleMessageService localeMessageService;
+
+    public MainMenuServiceImpl(LocaleMessageService localeMessageService) {
+        this.localeMessageService = localeMessageService;
+    }
+
     @Override
-    public SendMessage getMainMenuMessage(String chatId, String message) {
-        return createMessageWithKeyboard(chatId, message, getMainMenuKeyboardMarkup());
+    public SendMessage getMainMenuMessage(String chatId, String firstName) {
+        return createMessageWithKeyboard(chatId, localeMessageService.getMessage("reply.main-menu.greeting", chatId) + firstName, getMainMenuKeyboardMarkup(chatId));
     }
 
     private SendMessage createMessageWithKeyboard(String chatId, String message, ReplyKeyboardMarkup replyKeyboardMarkup) {
@@ -30,7 +37,7 @@ public class MainMenuServiceImpl implements MainMenuService {
         return sendMessage;
     }
 
-    private ReplyKeyboardMarkup getMainMenuKeyboardMarkup() {
+    private ReplyKeyboardMarkup getMainMenuKeyboardMarkup(String chatId) {
         final ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
@@ -40,7 +47,8 @@ public class MainMenuServiceImpl implements MainMenuService {
 
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
-        row1.add(new KeyboardButton("Поточний тиждень тренувань"));
+        row1.add(new KeyboardButton(localeMessageService.getMessage("reply.main-menu.keyboard.recent-week", chatId)));
+        row2.add(new KeyboardButton(localeMessageService.getMessage("reply.main-menu.keyboard.change-lang", chatId)));
         keyboard.add(row1);
         keyboard.add(row2);
         replyKeyboardMarkup.setKeyboard(keyboard);
