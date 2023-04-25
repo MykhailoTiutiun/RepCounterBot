@@ -54,11 +54,12 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
     public void createAllFromOldWorkoutWeek(WorkoutWeek oldWorkoutWeek, WorkoutWeek newWorkoutWeek) {
         List<WorkoutDay> workoutDays = getAllWorkoutDaysByWorkoutWeek(oldWorkoutWeek);
 
-        for (WorkoutDay dayNumber : workoutDays) {
-            WorkoutDay workoutDay = new WorkoutDay(dayNumber.getWorkoutWeek(), dayNumber.getName(), dayNumber.getDate(), dayNumber.getIsWorkoutDay());
+        for (int i = 0; i < workoutDays.size(); i++) {
+            WorkoutDay workoutDayOld = workoutDays.get(i);
+            WorkoutDay workoutDay = new WorkoutDay(newWorkoutWeek, workoutDayOld.getName(), newWorkoutWeek.getWeekStartDate().plusDays(i), workoutDayOld.getIsWorkoutDay());
             save(workoutDay);
 
-            workoutExerciseService.createAllFromOldWorkoutDay(dayNumber, workoutDay);
+            workoutExerciseService.createAllFromOldWorkoutDay(workoutDayOld, workoutDay);
         }
 
 
