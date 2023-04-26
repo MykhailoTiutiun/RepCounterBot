@@ -79,11 +79,9 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     public void createAllFromOldWorkoutDay(WorkoutDay oldWorkoutDay, WorkoutDay newWorkoutDay) {
         List<WorkoutExercise> workoutExercises = getWorkoutExerciseByWorkoutDay(oldWorkoutDay);
 
-        workoutExercises.forEach(workoutExercise -> {
-            workoutExercise.setId(null);
-            workoutExercise.setWorkoutDay(newWorkoutDay);
-
-            save(workoutExercise);
+        workoutExercises.forEach(oldWorkoutExercise -> {
+            WorkoutExercise newWorkoutExercise = new WorkoutExercise(oldWorkoutExercise.getNumber(), oldWorkoutExercise.getName(), newWorkoutDay, oldWorkoutExercise.getWorkoutSets());
+            save(newWorkoutExercise);
         });
     }
 
@@ -113,7 +111,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     public SendMessage getWorkoutExerciseMessage(String chatId, String workoutExerciseId) {
         WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
 
-        SendMessage sendMessage = new SendMessage(chatId, workoutExercise.print());
+        SendMessage sendMessage = new SendMessage(chatId, workoutExercise.printForWorkoutExercise(localeMessageService.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageService.getMessage("print.workout-set.pattern", chatId)));
         sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
         return sendMessage;
     }
