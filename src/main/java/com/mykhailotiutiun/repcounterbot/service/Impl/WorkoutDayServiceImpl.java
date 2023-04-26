@@ -118,9 +118,8 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
             workoutExercises.forEach(workoutExercise -> {
                 List<InlineKeyboardButton> row = new ArrayList<>();
 
-                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(workoutExercise.print());
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(workoutExercise.printForWorkoutDayKeyboard());
                 inlineKeyboardButton.setCallbackData("/select-WorkoutExercise:" + workoutExercise.getId());
-
                 row.add(inlineKeyboardButton);
 
                 keyboard.add(row);

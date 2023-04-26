@@ -63,4 +63,6 @@ public class WorkoutDay {
         stringBuilder.append(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         return stringBuilder.toString();
     }
+
+
 }
