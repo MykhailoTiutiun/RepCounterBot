@@ -11,6 +11,7 @@ import com.mykhailotiutiun.repcounterbot.service.WorkoutSetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -108,12 +109,14 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
 
     @Override
-    public SendMessage getWorkoutExerciseMessage(String chatId, String workoutExerciseId) {
+    public EditMessageText getWorkoutExerciseMessage(String chatId, Integer messageId, String workoutExerciseId) {
         WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
 
-        SendMessage sendMessage = new SendMessage(chatId, workoutExercise.printForWorkoutExercise(localeMessageService.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageService.getMessage("print.workout-set.pattern", chatId)));
-        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
-        return sendMessage;
+        EditMessageText editMessageText = new EditMessageText(workoutExercise.printForWorkoutExercise(localeMessageService.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageService.getMessage("print.workout-set.pattern", chatId)));
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
+        return editMessageText;
     }
 
     private InlineKeyboardMarkup getInlineKeyboardMarkupForWorkoutExercise(String chatId, WorkoutExercise workoutExercise) {
@@ -138,6 +141,12 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
         deleteButton.setCallbackData("/delete-WorkoutExercise:" + workoutExercise.getId());
         deleteButtonRow.add(deleteButton);
         keyboard.add(deleteButtonRow);
+
+        List<InlineKeyboardButton> backButtonRow = new ArrayList<>();
+        InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.keyboard.back", chatId));
+        backButton.setCallbackData("/select-WorkoutDay:" + workoutExercise.getWorkoutDay().getId());
+        backButtonRow.add(backButton);
+        keyboard.add(backButtonRow);
 
         return new InlineKeyboardMarkup(keyboard);
     }

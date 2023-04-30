@@ -5,8 +5,11 @@ import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
 import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
+import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
@@ -14,15 +17,16 @@ public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
 
     private final ChatDataCache chatDataCache;
     private final LocaleMessageService localeMessageService;
+    private final MainMenuService mainMenuService;
 
-
-    public WorkoutSetCallbackQueryHandler(ChatDataCache chatDataCache, LocaleMessageService localeMessageService) {
+    public WorkoutSetCallbackQueryHandler(ChatDataCache chatDataCache, LocaleMessageService localeMessageService, MainMenuService mainMenuService) {
         this.chatDataCache = chatDataCache;
         this.localeMessageService = localeMessageService;
+        this.mainMenuService = mainMenuService;
     }
 
     @Override
-    public SendMessage handleCallbackQuery(CallbackQuery callbackQuery) {
+    public BotApiMethod<?> handleCallbackQuery(CallbackQuery callbackQuery) {
         if (callbackQuery.getData().startsWith("/set-request")) {
             return handleFastSetsSetRequest(callbackQuery);
         }
@@ -34,9 +38,16 @@ public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
         return CallbackHandlerType.WORKOUT_SET_HANDLER;
     }
 
-    private SendMessage handleFastSetsSetRequest(CallbackQuery callbackQuery) {
-        chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.FAST_SETS_SET);
-        chatDataCache.setSelectedWorkoutExercise(callbackQuery.getFrom().getId().toString(), callbackQuery.getData().split(":")[1]);
-        return new SendMessage(callbackQuery.getFrom().getId().toString(), localeMessageService.getMessage("reply.workout-set.set", callbackQuery.getFrom().getId().toString()));
+    private EditMessageText handleFastSetsSetRequest(CallbackQuery callbackQuery) {
+        String chatId = callbackQuery.getFrom().getId().toString();
+        chatDataCache.setChatDataCurrentBotState(chatId, ChatState.FAST_SETS_SET);
+        chatDataCache.setSelectedMessageId(chatId, callbackQuery.getMessage().getMessageId());
+        chatDataCache.setSelectedWorkoutExercise(chatId, callbackQuery.getData().split(":")[1]);
+
+        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.workout-set.set", chatId));
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(callbackQuery.getMessage().getMessageId());
+        editMessageText.setReplyMarkup(mainMenuService.getBackButtonInlineKeyboard(chatId, "/select-WorkoutExercise:" + callbackQuery.getData().split(":")[1]));
+        return editMessageText;
     }
 }

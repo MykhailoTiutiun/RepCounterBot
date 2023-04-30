@@ -4,7 +4,7 @@ import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
 import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
@@ -16,7 +16,7 @@ public class CurrentWeekMessageHandler implements MessageHandler {
         this.workoutWeekService = workoutWeekService;}
 
     @Override
-    public SendMessage handleMessage(Message message) {
+    public BotApiMethod<?> handleMessage(Message message) {
         return workoutWeekService.getCurrentWorkoutWeekSendMessage(message.getChatId().toString());
     }
 
