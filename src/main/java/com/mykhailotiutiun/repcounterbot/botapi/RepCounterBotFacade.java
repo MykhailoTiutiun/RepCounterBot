@@ -9,7 +9,9 @@ import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -35,16 +37,17 @@ public class RepCounterBotFacade {
         this.chatDataCache = chatDataCache;
     }
 
-    public SendMessage handleUpdate(Update update) {
+    public BotApiMethod<?> handleUpdate(Update update) {
         if (update.hasCallbackQuery()) {
             return handleCallbackQuery(update.getCallbackQuery());
         } else {
             return handleMessage(update.getMessage());
         }
 
+
     }
 
-    private SendMessage handleCallbackQuery(CallbackQuery callbackQuery) {
+    private BotApiMethod<?> handleCallbackQuery(CallbackQuery callbackQuery) {
         CallbackQueryHandler callbackQueryHandler = choseCallbackQueryHandler(callbackQuery);
         if (callbackQueryHandler == null) {
             return new SendMessage(callbackQuery.getFrom().getId().toString(), localeMessageService.getMessage("reply.error", callbackQuery.getFrom().getId().toString()));
@@ -58,6 +61,9 @@ public class RepCounterBotFacade {
         if (callbackQuery.getData().contains("Main")) {
             chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.MAIN_MENU);
             return callbackQueryHandlers.get(CallbackHandlerType.MAIN_MENU_HANDLER);
+        } else if(callbackQuery.getData().contains("WorkoutWeek")) {
+            chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.MAIN_MENU);
+            return callbackQueryHandlers.get(CallbackHandlerType.WORKOUT_WEEK_HANDLER);
         } else if (callbackQuery.getData().contains("WorkoutDay")) {
             chatDataCache.setChatDataCurrentBotState(callbackQuery.getFrom().getId().toString(), ChatState.MAIN_MENU);
             return callbackQueryHandlers.get(CallbackHandlerType.WORKOUT_DAY_HANDLER);
@@ -73,7 +79,7 @@ public class RepCounterBotFacade {
     }
 
 
-    private SendMessage handleMessage(Message message) {
+    private BotApiMethod<?> handleMessage(Message message) {
         MessageHandler messageHandler = choseMessageHandler(message);
         if (messageHandler == null) {
             return new SendMessage(message.getChatId().toString(), localeMessageService.getMessage("reply.invalid-message", message.getChatId().toString()));

@@ -49,7 +49,11 @@ public class WorkoutExercise {
 
 
     public String printForWorkoutExercise(String onPrevWorkoutMessage, String workoutSetsPrintPattern){
-        return String.format("%d. %s", number, name) + "\n" + onPrevWorkoutMessage + printWorkoutSets(this.prevWorkoutSets, workoutSetsPrintPattern);
+        StringBuilder stringBuilder = new StringBuilder(String.format("%d. %s", number, name));
+        if(!prevWorkoutSets.isEmpty()){
+            stringBuilder.append("\n").append(onPrevWorkoutMessage).append(printWorkoutSets(this.prevWorkoutSets, workoutSetsPrintPattern));
+        }
+        return stringBuilder.toString();
     }
 
     public String printForWorkoutDayKeyboard() {

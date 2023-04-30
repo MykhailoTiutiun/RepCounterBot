@@ -8,6 +8,7 @@ import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
 import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -30,7 +31,7 @@ public class MainMenuMessageHandler implements MessageHandler {
     }
 
     @Override
-    public SendMessage handleMessage(Message message) {
+    public BotApiMethod<?> handleMessage(Message message) {
         switch (message.getText()) {
             case ("/start"):
                 return handleStart(message);

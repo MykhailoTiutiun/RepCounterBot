@@ -7,7 +7,7 @@ import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
@@ -24,11 +24,11 @@ public class WorkoutDayMessageHandler implements MessageHandler {
     }
 
     @Override
-    public SendMessage handleMessage(Message message) {
+    public BotApiMethod<?> handleMessage(Message message) {
         workoutDayService.setWorkoutDayName(chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()), message.getText());
 
         chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
-        return workoutWeekService.getCurrentWorkoutWeekSendMessage(message.getChatId().toString());
+        return workoutWeekService.getCurrentWorkoutWeekEditMessage(message.getChatId().toString(), chatDataCache.getSelectedMessageId(message.getChatId().toString()));
     }
 
     @Override
