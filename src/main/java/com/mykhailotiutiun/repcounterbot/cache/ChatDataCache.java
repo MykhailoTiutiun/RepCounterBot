@@ -10,6 +10,7 @@ import java.util.Map;
 public class ChatDataCache {
 
     private final Map<String, ChatState> usersBotStates = new HashMap<>();
+    private final Map<String, Integer> selectedMessageId = new HashMap<>();
     private final Map<String, String> userSelectedLanguage = new HashMap<>();
     private final Map<String, String> selectedWorkoutDays = new HashMap<>();
     private final Map<String, String> selectedWorkoutExercises = new HashMap<>();
@@ -25,6 +26,14 @@ public class ChatDataCache {
         }
 
         return chatState;
+    }
+
+    public void setSelectedMessageId(String chatId, Integer messageId) {
+        selectedMessageId.put(chatId, messageId);
+    }
+
+    public Integer getSelectedMessageId(String chatId) {
+        return selectedMessageId.get(chatId);
     }
 
     public void setSelectedWorkoutDay(String chatId, String workoutDayId) {

@@ -4,6 +4,7 @@ import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutExercise;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutSet;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.List;
 
@@ -26,5 +27,5 @@ public interface WorkoutExerciseService {
 
     void deleteById(String id);
 
-    SendMessage getWorkoutExerciseMessage(String chatId, String workoutExerciseId);
+    EditMessageText getWorkoutExerciseMessage(String chatId, Integer messageId, String workoutExerciseId);
 }

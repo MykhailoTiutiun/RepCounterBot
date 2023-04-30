@@ -5,7 +5,9 @@ import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -25,6 +27,13 @@ public class MainMenuServiceImpl implements MainMenuService {
     @Override
     public SendMessage getMainMenuMessage(String chatId, String firstName) {
         return createMessageWithKeyboard(chatId, localeMessageService.getMessage("reply.main-menu.greeting", chatId) + firstName, getMainMenuKeyboardMarkup(chatId));
+    }
+
+    @Override
+    public InlineKeyboardMarkup getBackButtonInlineKeyboard(String chatId, String backButtonCallbackData) {
+        InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.keyboard.back", chatId));
+        backButton.setCallbackData(backButtonCallbackData);
+        return InlineKeyboardMarkup.builder().keyboardRow(List.of(backButton)).build();
     }
 
     private SendMessage createMessageWithKeyboard(String chatId, String message, ReplyKeyboardMarkup replyKeyboardMarkup) {

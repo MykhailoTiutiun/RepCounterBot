@@ -13,6 +13,7 @@ import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -108,6 +109,17 @@ public class WorkoutWeekServiceImpl implements WorkoutWeekService {
         sendMessage.setReplyMarkup(getInlineKeyboardForWeek(workoutDayService.getAllWorkoutDaysByWorkoutWeek(currentWorkoutWeek), chatId));
 
         return sendMessage;
+    }
+
+    @Override
+    public EditMessageText getCurrentWorkoutWeekEditMessage(String chatId, Integer messageId){
+        WorkoutWeek currentWorkoutWeek = getCurrentWorkoutWeekByUserId(Long.valueOf(chatId));
+
+        EditMessageText editMessageText =new EditMessageText(currentWorkoutWeek.print(localeMessageService.getMessage("print.workout-week", chatId)));
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setReplyMarkup(getInlineKeyboardForWeek(workoutDayService.getAllWorkoutDaysByWorkoutWeek(currentWorkoutWeek), chatId));
+        return editMessageText;
     }
 
     private InlineKeyboardMarkup getInlineKeyboardForWeek(List<WorkoutDay> workoutDays, String chatId) {

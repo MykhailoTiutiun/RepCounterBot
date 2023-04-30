@@ -11,6 +11,7 @@ import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -100,13 +101,14 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
 
 
     @Override
-    public SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId) {
+    public EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, String workoutDayId) {
         WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
-        SendMessage sendMessage = new SendMessage(chatId, workoutDay.print(localeMessageService.getMessage("print.workout-day.is-rest-day", chatId), localeMessageService.getMessage("print.workout-day.type-not-set", chatId), localeMessageService.getLocalTag(chatId)));
+        EditMessageText editMessageText = new EditMessageText(workoutDay.print(localeMessageService.getMessage("print.workout-day.is-rest-day", chatId), localeMessageService.getMessage("print.workout-day.type-not-set", chatId), localeMessageService.getLocalTag(chatId)));
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setReplyMarkup(getInlineKeyboardMarkupForWorkoutDay(workoutDay, workoutExerciseService.getWorkoutExerciseByWorkoutDay(workoutDay), chatId));
 
-        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutDay(workoutDay, workoutExerciseService.getWorkoutExerciseByWorkoutDay(workoutDay), chatId));
-
-        return sendMessage;
+        return editMessageText;
     }
 
     private InlineKeyboardMarkup getInlineKeyboardMarkupForWorkoutDay(WorkoutDay workoutDay, List<WorkoutExercise> workoutExercises, String chatId) {
@@ -160,6 +162,12 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
 
         keyboard.add(lastRow);
 
+        List<InlineKeyboardButton> backButtonRow = new ArrayList<>();
+        InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.keyboard.back", chatId));
+        backButton.setCallbackData("/select-current-WorkoutWeek");
+        backButtonRow.add(backButton);
+
+        keyboard.add(backButtonRow);
         return new InlineKeyboardMarkup(keyboard);
     }
 }
