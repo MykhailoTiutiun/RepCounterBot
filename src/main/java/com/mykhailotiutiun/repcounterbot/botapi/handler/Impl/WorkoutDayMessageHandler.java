@@ -28,7 +28,7 @@ public class WorkoutDayMessageHandler implements MessageHandler {
         workoutDayService.setWorkoutDayName(chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()), message.getText());
 
         chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
-        return workoutWeekService.getCurrentWorkoutWeekEditMessage(message.getChatId().toString(), chatDataCache.getSelectedMessageId(message.getChatId().toString()));
+        return workoutWeekService.getCurrentWorkoutWeekSendMessage(message.getChatId().toString());
     }
 
     @Override

@@ -107,9 +107,17 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
         workoutExerciseRepository.deleteById(id);
     }
 
+    @Override
+    public SendMessage getWorkoutExerciseSendMessage(String chatId, String workoutExerciseId) {
+        WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
+
+        SendMessage sendMessage = new SendMessage(chatId, workoutExercise.printForWorkoutExercise(localeMessageService.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageService.getMessage("print.workout-set.pattern", chatId)));
+        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
+        return sendMessage;
+    }
 
     @Override
-    public EditMessageText getWorkoutExerciseMessage(String chatId, Integer messageId, String workoutExerciseId) {
+    public EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, String workoutExerciseId) {
         WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
 
         EditMessageText editMessageText = new EditMessageText(workoutExercise.printForWorkoutExercise(localeMessageService.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageService.getMessage("print.workout-set.pattern", chatId)));

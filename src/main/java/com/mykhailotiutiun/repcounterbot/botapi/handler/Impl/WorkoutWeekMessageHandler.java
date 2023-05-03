@@ -8,11 +8,11 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class CurrentWeekMessageHandler implements MessageHandler {
+public class WorkoutWeekMessageHandler implements MessageHandler {
 
     private final WorkoutWeekService workoutWeekService;
 
-    public CurrentWeekMessageHandler(WorkoutWeekService workoutWeekService) {
+    public WorkoutWeekMessageHandler(WorkoutWeekService workoutWeekService) {
         this.workoutWeekService = workoutWeekService;}
 
     @Override
