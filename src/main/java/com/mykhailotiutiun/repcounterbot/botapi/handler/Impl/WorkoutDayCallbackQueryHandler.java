@@ -36,6 +36,8 @@ public class WorkoutDayCallbackQueryHandler implements CallbackQueryHandler {
             return workoutDayService.getSelectWorkoutDayEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1]);
         } else if (callbackQuery.getData().startsWith("/set-name-request")) {
             return handelSetNameRequest(callbackQuery);
+        } else if (callbackQuery.getData().startsWith("/set-rest-request")) {
+            return handelSetRestRequest(callbackQuery);
         } else if (callbackQuery.getData().startsWith("/set-rest")) {
             return handelSetRest(callbackQuery);
         }
@@ -46,11 +48,6 @@ public class WorkoutDayCallbackQueryHandler implements CallbackQueryHandler {
     @Override
     public CallbackHandlerType getHandlerType() {
         return CallbackHandlerType.WORKOUT_DAY_HANDLER;
-    }
-
-    private EditMessageText handelSetRest(CallbackQuery callbackQuery) {
-        workoutDayService.setRestWorkoutDay(callbackQuery.getData().split(":")[1]);
-        return workoutWeekService.getCurrentWorkoutWeekEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId());
     }
 
     private EditMessageText handelSetNameRequest(CallbackQuery callbackQuery) {
@@ -65,6 +62,17 @@ public class WorkoutDayCallbackQueryHandler implements CallbackQueryHandler {
         editMessageText.setReplyMarkup(mainMenuService.getBackButtonInlineKeyboard(chatId, "/select-WorkoutDay:" + callbackQuery.getData().split(":")[1]));
 
         return editMessageText;
+    }
+
+
+    private EditMessageText handelSetRestRequest(CallbackQuery callbackQuery){
+        String dayId = callbackQuery.getData().split(":")[1];
+        return mainMenuService.getAreYouSureMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), "/set-rest-WorkoutDay:" + dayId, "/select-WorkoutDay:" + dayId);
+    }
+
+    private EditMessageText handelSetRest(CallbackQuery callbackQuery) {
+        workoutDayService.setRestWorkoutDay(callbackQuery.getData().split(":")[1]);
+        return workoutWeekService.getCurrentWorkoutWeekEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId());
     }
 
 
