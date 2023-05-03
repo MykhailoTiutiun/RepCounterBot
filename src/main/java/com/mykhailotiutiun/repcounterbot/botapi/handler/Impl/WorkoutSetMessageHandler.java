@@ -38,7 +38,7 @@ public class WorkoutSetMessageHandler implements MessageHandler {
         return MessageHandlerType.WORKOUT_SET_HANDLER;
     }
 
-    private EditMessageText handleFastSetsSetRequest(Message message) {
+    private SendMessage handleFastSetsSetRequest(Message message) {
         List<String> setsString = List.of(message.getText().replaceAll("\\s", "").split(","));
         List<WorkoutSet> workoutSets = new ArrayList<>();
 
@@ -50,6 +50,6 @@ public class WorkoutSetMessageHandler implements MessageHandler {
         String chatId = message.getChatId().toString();
         workoutExerciseService.addSetsToWorkoutExercise(chatDataCache.getSelectedWorkoutExercise(chatId), workoutSets);
 
-        return workoutExerciseService.getWorkoutExerciseMessage(chatId, chatDataCache.getSelectedMessageId(chatId), chatDataCache.getSelectedWorkoutExercise(chatId));
+        return workoutExerciseService.getWorkoutExerciseSendMessage(chatId, chatDataCache.getSelectedWorkoutExercise(chatId));
     }
 }

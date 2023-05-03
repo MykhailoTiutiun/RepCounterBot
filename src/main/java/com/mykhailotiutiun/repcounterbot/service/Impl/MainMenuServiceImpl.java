@@ -5,6 +5,7 @@ import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -30,11 +31,27 @@ public class MainMenuServiceImpl implements MainMenuService {
     }
 
     @Override
+    public EditMessageText getAreYouSureMessage(String chatId, Integer messageId, String okCallback, String cancelCallback) {
+        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.are-you-sure", chatId));
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+
+        InlineKeyboardButton okButton = InlineKeyboardButton.builder().text(localeMessageService.getMessage("reply.are-you-sure.keyboard.ok", chatId)).callbackData(okCallback).build();
+        InlineKeyboardButton cancelButton = InlineKeyboardButton.builder().text(localeMessageService.getMessage("reply.are-you-sure.keyboard.cancel", chatId)).callbackData(cancelCallback).build();
+
+        editMessageText.setReplyMarkup(InlineKeyboardMarkup.builder().keyboardRow(List.of(okButton, cancelButton)).build());
+
+        return editMessageText;
+    }
+
+    @Override
     public InlineKeyboardMarkup getBackButtonInlineKeyboard(String chatId, String backButtonCallbackData) {
         InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.keyboard.back", chatId));
         backButton.setCallbackData(backButtonCallbackData);
         return InlineKeyboardMarkup.builder().keyboardRow(List.of(backButton)).build();
     }
+
+
 
     private SendMessage createMessageWithKeyboard(String chatId, String message, ReplyKeyboardMarkup replyKeyboardMarkup) {
         final SendMessage sendMessage = new SendMessage();

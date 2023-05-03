@@ -38,6 +38,8 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
             return handleCreateRequest(callbackQuery);
         } else if (callbackQuery.getData().startsWith("/select")) {
             return handleSelect(callbackQuery);
+        } else if (callbackQuery.getData().startsWith("/delete-request")) {
+            return handleDeleteRequest(callbackQuery);
         } else if (callbackQuery.getData().startsWith("/delete")) {
             return handleDelete(callbackQuery);
         }
@@ -66,7 +68,12 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
 
 
     private EditMessageText handleSelect(CallbackQuery callbackQuery) {
-        return workoutExerciseService.getWorkoutExerciseMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1]);
+        return workoutExerciseService.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1]);
+    }
+
+    private EditMessageText handleDeleteRequest(CallbackQuery callbackQuery){
+        String exerciseId = callbackQuery.getData().split(":")[1];
+        return mainMenuService.getAreYouSureMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), "/delete-WorkoutExercise:" + exerciseId, "/select-WorkoutExercise:" + exerciseId);
     }
 
     private EditMessageText handleDelete(CallbackQuery callbackQuery) {
