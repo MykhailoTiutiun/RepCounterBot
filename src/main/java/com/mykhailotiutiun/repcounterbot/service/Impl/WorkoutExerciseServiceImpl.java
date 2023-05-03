@@ -146,7 +146,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
         List<InlineKeyboardButton> deleteButtonRow = new ArrayList<>();
         InlineKeyboardButton deleteButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.delete", chatId));
-        deleteButton.setCallbackData("/delete-WorkoutExercise:" + workoutExercise.getId());
+        deleteButton.setCallbackData("/delete-request-WorkoutExercise:" + workoutExercise.getId());
         deleteButtonRow.add(deleteButton);
         keyboard.add(deleteButtonRow);
 

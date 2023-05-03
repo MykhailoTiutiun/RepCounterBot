@@ -164,7 +164,7 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
         //Set rest day
         if (workoutDay.getIsWorkoutDay() == null || workoutDay.getIsWorkoutDay()) {
             InlineKeyboardButton setRestDayButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-day.keyboard.set-as-rest-day", chatId));
-            setRestDayButton.setCallbackData("/set-rest-WorkoutDay:" + workoutDay.getId());
+            setRestDayButton.setCallbackData("/set-rest-request-WorkoutDay:" + workoutDay.getId());
             lastRow.add(setRestDayButton);
         }
 
