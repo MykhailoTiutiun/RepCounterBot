@@ -9,6 +9,7 @@ import com.mykhailotiutiun.repcounterbot.service.WorkoutDayService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -36,10 +37,10 @@ public class WorkoutExerciseMessageHandler implements MessageHandler {
         return MessageHandlerType.WORKOUT_EXERCISE_HANDLER;
     }
 
-    private EditMessageText handleCreateWorkoutExercise(Message message) {
+    private SendMessage handleCreateWorkoutExercise(Message message) {
         workoutExerciseService.create(new WorkoutExercise(message.getText(), workoutDayService.getWorkoutDayById(chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()))));
 
         chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
-        return workoutDayService.getSelectWorkoutDayEditMessage(message.getChatId().toString(), chatDataCache.getSelectedMessageId(message.getChatId().toString()), chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()));
+        return workoutDayService.getSelectWorkoutDaySendMessage(message.getChatId().toString(), chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()));
     }
 }

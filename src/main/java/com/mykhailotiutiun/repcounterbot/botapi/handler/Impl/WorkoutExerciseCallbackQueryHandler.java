@@ -66,7 +66,7 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
 
 
     private EditMessageText handleSelect(CallbackQuery callbackQuery) {
-        return workoutExerciseService.getWorkoutExerciseMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1]);
+        return workoutExerciseService.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1]);
     }
 
     private EditMessageText handleDelete(CallbackQuery callbackQuery) {

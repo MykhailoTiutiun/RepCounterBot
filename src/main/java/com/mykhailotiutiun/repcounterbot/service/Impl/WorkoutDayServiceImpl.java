@@ -99,6 +99,14 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
         workoutDayRepository.deleteById(id);
     }
 
+    @Override
+    public SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId) {
+        WorkoutDay workoutDay = getWorkoutDayById(workoutDayId);
+        SendMessage sendMessage = new SendMessage(chatId, workoutDay.print(localeMessageService.getMessage("print.workout-day.is-rest-day", chatId), localeMessageService.getMessage("print.workout-day.type-not-set", chatId), localeMessageService.getLocalTag(chatId)));
+        sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutDay(workoutDay, workoutExerciseService.getWorkoutExerciseByWorkoutDay(workoutDay), chatId));
+
+        return sendMessage;
+    }
 
     @Override
     public EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, String workoutDayId) {

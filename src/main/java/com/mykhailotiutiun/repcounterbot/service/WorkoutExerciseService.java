@@ -27,5 +27,6 @@ public interface WorkoutExerciseService {
 
     void deleteById(String id);
 
-    EditMessageText getWorkoutExerciseMessage(String chatId, Integer messageId, String workoutExerciseId);
+    SendMessage getWorkoutExerciseSendMessage(String chatId, String workoutExerciseId);
+    EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, String workoutExerciseId);
 }
