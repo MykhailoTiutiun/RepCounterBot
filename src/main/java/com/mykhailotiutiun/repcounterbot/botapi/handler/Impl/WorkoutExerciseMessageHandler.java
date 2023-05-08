@@ -28,8 +28,12 @@ public class WorkoutExerciseMessageHandler implements MessageHandler {
 
     @Override
     public BotApiMethod<?> handleMessage(Message message) {
-        chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
-        return handleCreateWorkoutExercise(message);
+        switch (chatDataCache.getChatDataCurrentBotState(message.getChatId().toString())){
+            case CREATE_WORKOUT_EXERCISE: return handleCreateWorkoutExercise(message);
+            case CHANGE_WORKOUT_EXERCISE_NAME: return handleChangeName(message);
+        }
+
+        return null;
     }
 
     @Override
@@ -38,9 +42,18 @@ public class WorkoutExerciseMessageHandler implements MessageHandler {
     }
 
     private SendMessage handleCreateWorkoutExercise(Message message) {
+        chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
+
         workoutExerciseService.create(new WorkoutExercise(message.getText(), workoutDayService.getWorkoutDayById(chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()))));
 
+        return workoutDayService.getSelectWorkoutDaySendMessage(message.getChatId().toString(), chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()));
+    }
+
+    private SendMessage handleChangeName(Message message){
         chatDataCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
+
+        workoutExerciseService.setNameToWorkoutExercise(chatDataCache.getSelectedWorkoutExercise(message.getChatId().toString()), message.getText());
+
         return workoutDayService.getSelectWorkoutDaySendMessage(message.getChatId().toString(), chatDataCache.getSelectedWorkoutDay(message.getChatId().toString()));
     }
 }
