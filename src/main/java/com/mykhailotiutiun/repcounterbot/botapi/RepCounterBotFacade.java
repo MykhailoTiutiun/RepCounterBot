@@ -114,6 +114,7 @@ public class RepCounterBotFacade {
             case SET_NAME_FOR_WORKOUT_DAY:
                 return messageHandlers.get(MessageHandlerType.WORKOUT_DAY_HANDLER);
             case CREATE_WORKOUT_EXERCISE:
+            case CHANGE_WORKOUT_EXERCISE_NAME:
                 return messageHandlers.get(MessageHandlerType.WORKOUT_EXERCISE_HANDLER);
             case FAST_SETS_SET:
                 return messageHandlers.get(MessageHandlerType.WORKOUT_SET_HANDLER);

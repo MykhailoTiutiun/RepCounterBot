@@ -57,6 +57,11 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
+    public WorkoutExercise getWorkoutExerciseByNumberAndWorkoutDay(Byte number, WorkoutDay workoutDay){
+        return workoutExerciseRepository.findByNumberAndWorkoutDay(number, workoutDay).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
     public List<WorkoutExercise> getWorkoutExerciseByWorkoutDay(WorkoutDay workoutDay) {
         log.trace("Get WorkoutExercises by WorkoutDay: {}", workoutDay);
         return workoutExerciseRepository.findAllByWorkoutDay(workoutDay);
@@ -93,6 +98,43 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
+    public void setNameToWorkoutExercise(String workoutExerciseId, String name){
+        WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
+        log.trace("Save WorkoutExercise: {}", workoutExercise);
+
+        workoutExercise.setName(name);
+        save(workoutExercise);
+    }
+
+    @Override
+    public void moveUpWorkoutExercise(String workoutExerciseId){
+        WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
+
+        try {
+            WorkoutExercise swappableWorkoutExercise = getWorkoutExerciseByNumberAndWorkoutDay((byte) (workoutExercise.getNumber() - 1), workoutExercise.getWorkoutDay());
+            swappableWorkoutExercise.setNumber((byte) (swappableWorkoutExercise.getNumber() + 1));
+            save(swappableWorkoutExercise);
+        } catch (EntityNotFoundException ignored) {}
+
+        workoutExercise.setNumber((byte) (workoutExercise.getNumber() - 1));
+        save(workoutExercise);
+    }
+
+    @Override
+    public void moveDownWorkoutExercise(String workoutExerciseId){
+        WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
+
+        try {
+            WorkoutExercise swappableWorkoutExercise = getWorkoutExerciseByNumberAndWorkoutDay((byte) (workoutExercise.getNumber() + 1), workoutExercise.getWorkoutDay());
+            swappableWorkoutExercise.setNumber((byte) (swappableWorkoutExercise.getNumber() - 1));
+            save(swappableWorkoutExercise);
+        } catch (EntityNotFoundException ignored) {}
+
+        workoutExercise.setNumber((byte) (workoutExercise.getNumber() + 1));
+        save(workoutExercise);
+    }
+
+    @Override
     public void addSetsToWorkoutExercise(String workoutExerciseId, List<WorkoutSet> workoutSets) {
         workoutSets.forEach(workoutSetService::save);
 
@@ -117,13 +159,18 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
-    public EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, String workoutExerciseId) {
+    public EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, String workoutExerciseId, Boolean isOnEditPage) {
         WorkoutExercise workoutExercise = getWorkoutExerciseById(workoutExerciseId);
 
         EditMessageText editMessageText = new EditMessageText(workoutExercise.printForWorkoutExercise(localeMessageService.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageService.getMessage("print.workout-set.pattern", chatId)));
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(messageId);
-        editMessageText.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
+
+        if(isOnEditPage){
+            editMessageText.setReplyMarkup(getInlineKeyboardMarkupForEditWorkoutExercise(chatId, workoutExercise));
+        } else {
+            editMessageText.setReplyMarkup(getInlineKeyboardMarkupForWorkoutExercise(chatId, workoutExercise));
+        }
         return editMessageText;
     }
 
@@ -131,31 +178,38 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
         workoutExercise.getWorkoutSets().forEach(workoutSet -> {
-            List<InlineKeyboardButton> setRow = new ArrayList<>();
-            InlineKeyboardButton setButton = new InlineKeyboardButton(workoutSet.print(localeMessageService.getMessage("print.workout-set.pattern", chatId)));
-            setButton.setCallbackData("/select-WorkoutSet:" + workoutSet.getId());
-            setRow.add(setButton);
-            keyboard.add(setRow);
+            keyboard.add(getButtonRow(workoutSet.print(localeMessageService.getMessage("print.workout-set.pattern", chatId)), "/select-WorkoutSet:" + workoutSet.getId()));
         });
 
-        List<InlineKeyboardButton> setSetsRequestButtonRow = new ArrayList<>();
-        InlineKeyboardButton setSetsRequestButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-exercise.keyboard.set-sets-request", chatId));
-        setSetsRequestButton.setCallbackData("/set-request-WorkoutSet:" + workoutExercise.getId());
-        setSetsRequestButtonRow.add(setSetsRequestButton);
-        keyboard.add(setSetsRequestButtonRow);
-
-        List<InlineKeyboardButton> deleteButtonRow = new ArrayList<>();
-        InlineKeyboardButton deleteButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.delete", chatId));
-        deleteButton.setCallbackData("/delete-request-WorkoutExercise:" + workoutExercise.getId());
-        deleteButtonRow.add(deleteButton);
-        keyboard.add(deleteButtonRow);
-
-        List<InlineKeyboardButton> backButtonRow = new ArrayList<>();
-        InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.keyboard.back", chatId));
-        backButton.setCallbackData("/select-WorkoutDay:" + workoutExercise.getWorkoutDay().getId());
-        backButtonRow.add(backButton);
-        keyboard.add(backButtonRow);
+        keyboard.add(getButtonRow(localeMessageService.getMessage("reply.workout-exercise.keyboard.set-sets-request", chatId), "/set-request-WorkoutSet:" + workoutExercise.getId()));
+        keyboard.add(getButtonRow(localeMessageService.getMessage("reply.workout-exercise.keyboard.edit", chatId), "/edit-WorkoutExercise:" + workoutExercise.getId()));
+        keyboard.add(getButtonRow(localeMessageService.getMessage("reply.keyboard.back", chatId), "/select-WorkoutDay:" + workoutExercise.getWorkoutDay().getId()));
 
         return new InlineKeyboardMarkup(keyboard);
+    }
+
+    private InlineKeyboardMarkup getInlineKeyboardMarkupForEditWorkoutExercise(String chatId, WorkoutExercise workoutExercise) {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+
+        if(workoutExercise.getNumber() > 1){
+            keyboard.add(getButtonRow(localeMessageService.getMessage("reply.keyboard.move-up", chatId), "/move-up-request-WorkoutExercise:" + workoutExercise.getId()));
+        }
+
+        if(workoutExercise.getNumber() < getLatestWorkoutExerciseNumberByWorkoutDay(workoutExercise.getWorkoutDay())){
+            keyboard.add(getButtonRow(localeMessageService.getMessage("reply.keyboard.move-down", chatId), "/move-down-request-WorkoutExercise:" + workoutExercise.getId()));
+        }
+        keyboard.add(getButtonRow(localeMessageService.getMessage("reply.change-name", chatId), "/change-name-request-WorkoutExercise:" + workoutExercise.getId()));
+        keyboard.add(getButtonRow(localeMessageService.getMessage("reply.delete", chatId), "/delete-request-WorkoutExercise:" + workoutExercise.getId()));
+        keyboard.add(getButtonRow(localeMessageService.getMessage("reply.keyboard.back", chatId), "/select-WorkoutExercise:" + workoutExercise.getId()));
+
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    private List<InlineKeyboardButton> getButtonRow(String buttonText, String buttonCallback){
+        List<InlineKeyboardButton> buttonRow = new ArrayList<>();
+        InlineKeyboardButton button = new InlineKeyboardButton(buttonText);
+        button.setCallbackData(buttonCallback);
+        buttonRow.add(button);
+        return buttonRow;
     }
 }
