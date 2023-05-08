@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 @Component
 public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler {
@@ -38,6 +39,14 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
             return handleCreateRequest(callbackQuery);
         } else if (callbackQuery.getData().startsWith("/select")) {
             return handleSelect(callbackQuery);
+        } else if (callbackQuery.getData().startsWith("/edit")) {
+            return handleEdit(callbackQuery);
+        } else if(callbackQuery.getData().startsWith("/move-up")) {
+            return moveUp(callbackQuery);
+        } else if(callbackQuery.getData().startsWith("/move-down")) {
+            return moveDown(callbackQuery);
+        } else if(callbackQuery.getData().startsWith("/change-name-request")) {
+            return handleChangeNameRequest(callbackQuery);
         } else if (callbackQuery.getData().startsWith("/delete-request")) {
             return handleDeleteRequest(callbackQuery);
         } else if (callbackQuery.getData().startsWith("/delete")) {
@@ -57,7 +66,7 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
         chatDataCache.setSelectedMessageId(chatId, callbackQuery.getMessage().getMessageId());
         chatDataCache.setSelectedWorkoutDay(chatId, callbackQuery.getData().split(":")[1]);
 
-        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.workout-exercise.create-request", chatId));
+        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.workout-exercise.enter-the-name", chatId));
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(callbackQuery.getMessage().getMessageId());
         editMessageText.setReplyMarkup(mainMenuService.getBackButtonInlineKeyboard(chatId , "/select-WorkoutDay:" + callbackQuery.getData().split(":")[1]));
@@ -67,8 +76,38 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
 
 
 
+
     private EditMessageText handleSelect(CallbackQuery callbackQuery) {
-        return workoutExerciseService.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1]);
+        return workoutExerciseService.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1], false);
+    }
+
+    private EditMessageText handleEdit(CallbackQuery callbackQuery) {
+        return workoutExerciseService.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1], true);
+    }
+
+    private EditMessageText moveUp(CallbackQuery callbackQuery){
+        WorkoutExercise workoutExercise = workoutExerciseService.getWorkoutExerciseById(callbackQuery.getData().split(":")[1]);
+        workoutExerciseService.moveUpWorkoutExercise(callbackQuery.getData().split(":")[1]);
+        return workoutDayService.getSelectWorkoutDayEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), workoutExercise.getWorkoutDay().getId());
+    }
+
+    private EditMessageText moveDown(CallbackQuery callbackQuery){
+        workoutExerciseService.moveDownWorkoutExercise(callbackQuery.getData().split(":")[1]);
+        WorkoutExercise workoutExercise = workoutExerciseService.getWorkoutExerciseById(callbackQuery.getData().split(":")[1]);
+        return workoutDayService.getSelectWorkoutDayEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), workoutExercise.getWorkoutDay().getId());
+    }
+
+    private EditMessageText handleChangeNameRequest(CallbackQuery callbackQuery){
+        String chatId = callbackQuery.getFrom().getId().toString();
+        chatDataCache.setChatDataCurrentBotState(chatId, ChatState.CHANGE_WORKOUT_EXERCISE_NAME);
+        chatDataCache.setSelectedWorkoutExercise(chatId, callbackQuery.getData().split(":")[1]);
+
+        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.workout-exercise.enter-the-name", chatId));
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(callbackQuery.getMessage().getMessageId());
+
+        editMessageText.setReplyMarkup(mainMenuService.getBackButtonInlineKeyboard(chatId, "/edit-WorkoutExercise:" + callbackQuery.getData().split(":")[1]));
+        return editMessageText;
     }
 
     private EditMessageText handleDeleteRequest(CallbackQuery callbackQuery){

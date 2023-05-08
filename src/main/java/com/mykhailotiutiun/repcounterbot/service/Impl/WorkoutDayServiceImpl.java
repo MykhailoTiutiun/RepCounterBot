@@ -149,7 +149,7 @@ public class WorkoutDayServiceImpl implements WorkoutDayService {
 
         //Change name
         if (workoutDay.getIsWorkoutDay() != null && workoutDay.getIsWorkoutDay()) {
-            InlineKeyboardButton setNameButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.workout-day.keyboard.set-name-request", chatId));
+            InlineKeyboardButton setNameButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.change-name", chatId));
             setNameButton.setCallbackData("/set-name-request-WorkoutDay:" + workoutDay.getId());
             lastRow.add(setNameButton);
         }
