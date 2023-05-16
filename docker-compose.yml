@@ -26,7 +26,7 @@ services:
     image: apcheamitru/arm32v7-mongo
     environment:
       MONGO_INITDB_DATABASE: rep-counter-bot
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./dbdata:/data/db
     deploy:
@@ -36,7 +36,19 @@ services:
           memory: 300M
     networks:
       - repcounterbot
-
+    
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017
+      - ME_CONFIG_BASICAUTH_USERNAME=XpZfCh3qQ0fYtk06EeyP
+      - ME_CONFIG_BASICAUTH_PASSWORD=XJf3Tvuqa1mu2o9SiqbR
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    networks:
+      - repcounterbot
 
 networks:
   repcounterbot:
