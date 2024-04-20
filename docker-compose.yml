@@ -1,52 +1,18 @@
 version: "3.3"
 services:
-  tomcat:
-    container_name: tomcat
-    image: tomcat
-    depends_on:
-      - mongo
+  rep-counter-bot:
+    container_name: rep-counter-bot
+    image: rep-counter-bot
     ports:
       - "8080:8080"
     environment:
-      DATASOURCE_URI: "mongo"
-    volumes:
-      - ./logs/:/usr/local/tomcat/logs/
-      - ./target/RepCounterBot.war:/usr/local/tomcat/webapps-javaee/ROOT.war
+      DATASOURCE_URI: "mongodb+srv://repcounterbot-app:rgEthTOPub2oDoJG@repcounterbotcluster.at0fumi.mongodb.net/?retryWrites=true&w=majority&appName=RepCounterBotCluster"
     restart: unless-stopped
     deploy:
       resources:
         limits:
           cpus: '1'
           memory: 300M
-    networks:
-      - repcounterbot
-
-  mongo:
-    container_name: mongo
-    image: apcheamitru/arm32v7-mongo
-    environment:
-      MONGO_INITDB_DATABASE: rep-counter-bot
-    restart: unless-stopped
-    volumes:
-      - ./dbdata:/data/db
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 300M
-    networks:
-      - repcounterbot
-    
-  mongo-express:
-    image: mongo-express
-    container_name: mongo-express
-    environment:
-      - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017
-      - ME_CONFIG_BASICAUTH_USERNAME=XpZfCh3qQ0fYtk06EeyP
-      - ME_CONFIG_BASICAUTH_PASSWORD=XJf3Tvuqa1mu2o9SiqbR
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
     networks:
       - repcounterbot
 
