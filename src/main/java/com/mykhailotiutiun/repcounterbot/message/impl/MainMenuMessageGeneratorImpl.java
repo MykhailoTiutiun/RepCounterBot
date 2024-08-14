@@ -1,8 +1,9 @@
-package com.mykhailotiutiun.repcounterbot.service.Impl;
+package com.mykhailotiutiun.repcounterbot.message.impl;
 
-import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
-import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
+import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
+import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -15,29 +16,28 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
-@Service
-public class MainMenuServiceImpl implements MainMenuService {
+@Component
+public class MainMenuMessageGeneratorImpl implements MainMenuMessageGenerator {
 
-    private final LocaleMessageService localeMessageService;
+    private final LocaleMessageUtil localeMessageUtil;
 
-    public MainMenuServiceImpl(LocaleMessageService localeMessageService) {
-        this.localeMessageService = localeMessageService;
+    public MainMenuMessageGeneratorImpl(LocaleMessageUtil localeMessageUtil) {
+        this.localeMessageUtil = localeMessageUtil;
     }
 
     @Override
     public SendMessage getMainMenuMessage(String chatId, String firstName) {
-        return createMessageWithKeyboard(chatId, localeMessageService.getMessage("reply.main-menu.greeting", chatId) + firstName, getMainMenuKeyboardMarkup(chatId));
+        return createMessageWithKeyboard(chatId, localeMessageUtil.getMessage("reply.main-menu.greeting", chatId) + firstName, getMainMenuKeyboardMarkup(chatId));
     }
 
     @Override
     public EditMessageText getAreYouSureMessage(String chatId, Integer messageId, String okCallback, String cancelCallback) {
-        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.are-you-sure", chatId));
+        EditMessageText editMessageText = new EditMessageText(localeMessageUtil.getMessage("reply.are-you-sure", chatId));
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(messageId);
 
-        InlineKeyboardButton okButton = InlineKeyboardButton.builder().text(localeMessageService.getMessage("reply.are-you-sure.keyboard.ok", chatId)).callbackData(okCallback).build();
-        InlineKeyboardButton cancelButton = InlineKeyboardButton.builder().text(localeMessageService.getMessage("reply.are-you-sure.keyboard.cancel", chatId)).callbackData(cancelCallback).build();
+        InlineKeyboardButton okButton = InlineKeyboardButton.builder().text(localeMessageUtil.getMessage("reply.are-you-sure.keyboard.ok", chatId)).callbackData(okCallback).build();
+        InlineKeyboardButton cancelButton = InlineKeyboardButton.builder().text(localeMessageUtil.getMessage("reply.are-you-sure.keyboard.cancel", chatId)).callbackData(cancelCallback).build();
 
         editMessageText.setReplyMarkup(InlineKeyboardMarkup.builder().keyboardRow(List.of(okButton, cancelButton)).build());
 
@@ -46,7 +46,7 @@ public class MainMenuServiceImpl implements MainMenuService {
 
     @Override
     public InlineKeyboardMarkup getBackButtonInlineKeyboard(String chatId, String backButtonCallbackData) {
-        InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageService.getMessage("reply.keyboard.back", chatId));
+        InlineKeyboardButton backButton = new InlineKeyboardButton(localeMessageUtil.getMessage("reply.keyboard.back", chatId));
         backButton.setCallbackData(backButtonCallbackData);
         return InlineKeyboardMarkup.builder().keyboardRow(List.of(backButton)).build();
     }
@@ -73,8 +73,8 @@ public class MainMenuServiceImpl implements MainMenuService {
 
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
-        row1.add(new KeyboardButton(localeMessageService.getMessage("reply.main-menu.keyboard.recent-week", chatId)));
-        row2.add(new KeyboardButton(localeMessageService.getMessage("reply.main-menu.keyboard.change-lang", chatId)));
+        row1.add(new KeyboardButton(localeMessageUtil.getMessage("reply.main-menu.keyboard.recent-week", chatId)));
+        row2.add(new KeyboardButton(localeMessageUtil.getMessage("reply.main-menu.keyboard.change-lang", chatId)));
         keyboard.add(row1);
         keyboard.add(row2);
         replyKeyboardMarkup.setKeyboard(keyboard);

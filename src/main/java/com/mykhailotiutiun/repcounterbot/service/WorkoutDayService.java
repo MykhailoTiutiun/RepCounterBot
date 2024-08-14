@@ -8,22 +8,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import java.util.List;
 
 public interface WorkoutDayService {
-    WorkoutDay getWorkoutDayById(String id);
-
-    List<WorkoutDay> getAllWorkoutDaysByWorkoutWeek(WorkoutWeek workoutWeek);
-
-    List<WorkoutDay> getAllWorkoutDays();
+    WorkoutDay getById(String id);
+    List<WorkoutDay> getAllByWorkoutWeek(WorkoutWeek workoutWeek);
 
     void createAllFromOldWorkoutWeek(WorkoutWeek oldWorkoutWeek, WorkoutWeek newWorkoutWeek);
-
-    void save(WorkoutDay workoutWeek);
-
-    void setWorkoutDayName(String workoutDayId, String name);
-
+    void save(WorkoutDay workoutDay);
+    void setName(String workoutDayId, String name);
     void setRestWorkoutDay(String workoutDayId);
 
-    void deleteById(String id);
-
-    SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId);
-    EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, String workoutDayId);
 }

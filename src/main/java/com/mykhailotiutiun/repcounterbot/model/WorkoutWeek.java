@@ -1,10 +1,6 @@
 package com.mykhailotiutiun.repcounterbot.model;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,28 +8,16 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @ToString
-@Document(collection = "workout-weeks")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkoutWeek {
 
-    @Id
-    String id;
-
-    @DocumentReference(lazy = true)
-    User user;
-
-    Boolean current = true;
-
-    LocalDate weekStartDate;
-    LocalDate weekEndDate;
-
-    public WorkoutWeek(User user, LocalDate weekStartDate, LocalDate weekEndDate) {
-        this.user = user;
-        this.weekStartDate = weekStartDate;
-        this.weekEndDate = weekEndDate;
-    }
+    private String id;
+    private User user;
+    private Boolean current = true;
+    private LocalDate weekStartDate;
+    private LocalDate weekEndDate;
 
     public Boolean isCurrent() {
         return current;

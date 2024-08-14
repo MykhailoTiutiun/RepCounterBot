@@ -1,6 +1,5 @@
 package com.mykhailotiutiun.repcounterbot.service.Impl;
 
-import com.mykhailotiutiun.repcounterbot.exception.EntityNotFoundException;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutSet;
 import com.mykhailotiutiun.repcounterbot.repository.WorkoutSetRepository;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutSetService;
@@ -18,17 +17,8 @@ public class WorkoutSetServiceImpl implements WorkoutSetService {
     }
 
     @Override
-    public WorkoutSet getWorkoutSetById(String id) {
-        return workoutSetRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
-
-    @Override
     public void save(WorkoutSet workoutSet) {
         workoutSetRepository.save(workoutSet);
     }
 
-    @Override
-    public void deleteById(String id) {
-        workoutSetRepository.deleteById(id);
-    }
 }

@@ -1,29 +1,18 @@
 package com.mykhailotiutiun.repcounterbot.model;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Getter
 @Setter
 @ToString
-@Document(collection = "users")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
-    @Id
-    Long id;
+    private Long id;
+    private String username;
+    private String localTag = "en-US";
 
-    String username;
-
-    String localTag = "en-US";
-
-    public User(Long id, String username) {
-        this.id = id;
-        this.username = username;
-    }
 }

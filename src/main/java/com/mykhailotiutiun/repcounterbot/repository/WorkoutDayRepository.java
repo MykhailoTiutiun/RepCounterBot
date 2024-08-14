@@ -2,11 +2,14 @@ package com.mykhailotiutiun.repcounterbot.repository;
 
 import com.mykhailotiutiun.repcounterbot.model.WorkoutDay;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface WorkoutDayRepository extends MongoRepository<WorkoutDay, String> {
+public interface WorkoutDayRepository {
 
+    Optional<WorkoutDay> findById(String id);
     List<WorkoutDay> findAllByWorkoutWeek(WorkoutWeek WorkoutWeek);
+
+    WorkoutDay save(WorkoutDay workoutDay);
 }

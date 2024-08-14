@@ -1,10 +1,6 @@
 package com.mykhailotiutiun.repcounterbot.model;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
@@ -16,30 +12,16 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Document(collection = "workout-days")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkoutDay {
 
-    @Id
-    String id;
-
-    @DocumentReference(lazy = true)
-    WorkoutWeek workoutWeek;
-
-    String name;
-
-    LocalDate date;
-
-    Boolean isWorkoutDay;
-
-    public WorkoutDay(WorkoutWeek workoutWeek, String name, LocalDate date, Boolean isWorkoutDay) {
-        this.workoutWeek = workoutWeek;
-        this.name = name;
-        this.date = date;
-        this.isWorkoutDay = isWorkoutDay;
-    }
+    private String id;
+    private WorkoutWeek workoutWeek;
+    private String name;
+    private LocalDate date;
+    private Boolean isWorkoutDay;
 
     public Boolean isWorkoutDay() {
         return isWorkoutDay;

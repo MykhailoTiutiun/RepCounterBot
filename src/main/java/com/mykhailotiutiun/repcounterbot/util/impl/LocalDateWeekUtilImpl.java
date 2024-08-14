@@ -1,34 +1,28 @@
-package com.mykhailotiutiun.repcounterbot.service.Impl;
+package com.mykhailotiutiun.repcounterbot.util.impl;
 
-import com.mykhailotiutiun.repcounterbot.service.LocalDateWeekService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.mykhailotiutiun.repcounterbot.util.LocalDateWeekUtil;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-@Slf4j
-@Service
-public class LocalDateWeekServiceImpl implements LocalDateWeekService {
+@Component
+public class LocalDateWeekUtilImpl implements LocalDateWeekUtil {
 
     @Override
     public LocalDate getFirstDateOfWeekFromDate(LocalDate localDate) {
-
         int i = 0;
         while (localDate.getDayOfWeek().minus(i).getValue() != 1) {
             i++;
         }
-
         return localDate.minusDays(i);
     }
 
     @Override
     public LocalDate getLastDateOfWeekFromDate(LocalDate localDate) {
-
         int i = 0;
         while (localDate.getDayOfWeek().plus(i).getValue() != 7) {
             i++;
         }
-
         return localDate.plusDays(i);
     }
 

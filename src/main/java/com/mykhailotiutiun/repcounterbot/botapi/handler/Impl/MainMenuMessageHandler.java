@@ -4,8 +4,8 @@ import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
 import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.exception.EntityAlreadyExistsException;
 import com.mykhailotiutiun.repcounterbot.model.User;
-import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
-import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
+import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
+import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -20,14 +20,14 @@ import java.util.List;
 @Component
 public class MainMenuMessageHandler implements MessageHandler {
 
-    private final MainMenuService mainMenuService;
+    private final MainMenuMessageGenerator mainMenuMessageGenerator;
     private final UserService userService;
-    private final LocaleMessageService localeMessageService;
+    private final LocaleMessageUtil localeMessageUtil;
 
-    public MainMenuMessageHandler(MainMenuService mainMenuService, UserService userService, LocaleMessageService localeMessageService) {
-        this.mainMenuService = mainMenuService;
+    public MainMenuMessageHandler(MainMenuMessageGenerator mainMenuMessageGenerator, UserService userService, LocaleMessageUtil localeMessageUtil) {
+        this.mainMenuMessageGenerator = mainMenuMessageGenerator;
         this.userService = userService;
-        this.localeMessageService = localeMessageService;
+        this.localeMessageUtil = localeMessageUtil;
     }
 
     @Override
@@ -44,14 +44,17 @@ public class MainMenuMessageHandler implements MessageHandler {
 
     private SendMessage handleStart(Message message) {
         try {
-            userService.create(new User(message.getFrom().getId(), message.getFrom().getFirstName()));
+            userService.create(User.builder()
+                    .id(message.getFrom().getId())
+                    .username(message.getFrom().getFirstName())
+                    .build());
         } catch (EntityAlreadyExistsException ignored) {
         }
-        return mainMenuService.getMainMenuMessage(message.getChatId().toString(), message.getFrom().getFirstName());
+        return mainMenuMessageGenerator.getMainMenuMessage(message.getChatId().toString(), message.getFrom().getFirstName());
     }
 
     private SendMessage handleChooseLang(Message message) {
-        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), localeMessageService.getMessage("reply.main-menu.keyboard.change-lang", message.getChatId().toString()));
+        SendMessage sendMessage = new SendMessage(message.getChatId().toString(), localeMessageUtil.getMessage("reply.main-menu.keyboard.change-lang", message.getChatId().toString()));
         sendMessage.setReplyMarkup(getKeyboardForLang(message.getChatId().toString()));
         return sendMessage;
     }

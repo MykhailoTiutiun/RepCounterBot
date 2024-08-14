@@ -1,28 +1,30 @@
 package com.mykhailotiutiun.repcounterbot.botapi.handler.Impl;
 
 import com.mykhailotiutiun.repcounterbot.botapi.handler.CallbackQueryHandler;
-import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
+import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
+import com.mykhailotiutiun.repcounterbot.cache.CurrentBotStateCache;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
-import com.mykhailotiutiun.repcounterbot.service.LocaleMessageService;
-import com.mykhailotiutiun.repcounterbot.service.MainMenuService;
+import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
+import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
 
-    private final ChatDataCache chatDataCache;
-    private final LocaleMessageService localeMessageService;
-    private final MainMenuService mainMenuService;
+    private final SelectedWorkoutExerciseCache selectedWorkoutExerciseCache;
+    private final LocaleMessageUtil localeMessageUtil;
+    private final MainMenuMessageGenerator mainMenuMessageGenerator;
+    private final CurrentBotStateCache currentBotStateCache;
 
-    public WorkoutSetCallbackQueryHandler(ChatDataCache chatDataCache, LocaleMessageService localeMessageService, MainMenuService mainMenuService) {
-        this.chatDataCache = chatDataCache;
-        this.localeMessageService = localeMessageService;
-        this.mainMenuService = mainMenuService;
+    public WorkoutSetCallbackQueryHandler(SelectedWorkoutExerciseCache selectedWorkoutExerciseCache, LocaleMessageUtil localeMessageUtil, MainMenuMessageGenerator mainMenuMessageGenerator, CurrentBotStateCache currentBotStateCache) {
+        this.selectedWorkoutExerciseCache = selectedWorkoutExerciseCache;
+        this.localeMessageUtil = localeMessageUtil;
+        this.mainMenuMessageGenerator = mainMenuMessageGenerator;
+        this.currentBotStateCache = currentBotStateCache;
     }
 
     @Override
@@ -40,14 +42,13 @@ public class WorkoutSetCallbackQueryHandler implements CallbackQueryHandler {
 
     private EditMessageText handleFastSetsSetRequest(CallbackQuery callbackQuery) {
         String chatId = callbackQuery.getFrom().getId().toString();
-        chatDataCache.setChatDataCurrentBotState(chatId, ChatState.FAST_SETS_SET);
-        chatDataCache.setSelectedMessageId(chatId, callbackQuery.getMessage().getMessageId());
-        chatDataCache.setSelectedWorkoutExercise(chatId, callbackQuery.getData().split(":")[1]);
+        currentBotStateCache.setChatDataCurrentBotState(chatId, ChatState.FAST_SETS_SET);
+        selectedWorkoutExerciseCache.setSelectedWorkoutExercise(chatId, callbackQuery.getData().split(":")[1]);
 
-        EditMessageText editMessageText = new EditMessageText(localeMessageService.getMessage("reply.workout-set.set", chatId));
+        EditMessageText editMessageText = new EditMessageText(localeMessageUtil.getMessage("reply.workout-set.set", chatId));
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(callbackQuery.getMessage().getMessageId());
-        editMessageText.setReplyMarkup(mainMenuService.getBackButtonInlineKeyboard(chatId, "/select-WorkoutExercise:" + callbackQuery.getData().split(":")[1]));
+        editMessageText.setReplyMarkup(mainMenuMessageGenerator.getBackButtonInlineKeyboard(chatId, "/select-WorkoutExercise:" + callbackQuery.getData().split(":")[1]));
         return editMessageText;
     }
 }
