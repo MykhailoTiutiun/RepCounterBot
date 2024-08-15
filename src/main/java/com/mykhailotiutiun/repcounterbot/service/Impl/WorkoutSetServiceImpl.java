@@ -18,6 +18,7 @@ public class WorkoutSetServiceImpl implements WorkoutSetService {
 
     @Override
     public void save(WorkoutSet workoutSet) {
+        log.trace("Save WorkoutSet: {}", workoutSet);
         workoutSetRepository.save(workoutSet);
     }
 

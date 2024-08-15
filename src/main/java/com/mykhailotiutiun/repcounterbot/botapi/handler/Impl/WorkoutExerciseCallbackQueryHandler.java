@@ -1,17 +1,17 @@
 package com.mykhailotiutiun.repcounterbot.botapi.handler.Impl;
 
 import com.mykhailotiutiun.repcounterbot.botapi.handler.CallbackQueryHandler;
-import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
 import com.mykhailotiutiun.repcounterbot.cache.CurrentBotStateCache;
 import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutDayCache;
+import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
+import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
 import com.mykhailotiutiun.repcounterbot.message.WorkoutDayMessageGenerator;
 import com.mykhailotiutiun.repcounterbot.message.WorkoutExerciseMessageGenerator;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutExercise;
-import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
-import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
+import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -85,22 +85,22 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
 
 
     private EditMessageText handleSelect(CallbackQuery callbackQuery) {
-        return workoutExerciseMessageGenerator.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1], false);
+        return workoutExerciseMessageGenerator.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), Long.valueOf(callbackQuery.getData().split(":")[1]), false);
     }
 
     private EditMessageText handleEdit(CallbackQuery callbackQuery) {
-        return workoutExerciseMessageGenerator.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), callbackQuery.getData().split(":")[1], true);
+        return workoutExerciseMessageGenerator.getWorkoutExerciseEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), Long.valueOf(callbackQuery.getData().split(":")[1]), true);
     }
 
     private EditMessageText moveUp(CallbackQuery callbackQuery){
-        WorkoutExercise workoutExercise = workoutExerciseService.getById(callbackQuery.getData().split(":")[1]);
-        workoutExerciseService.moveUp(callbackQuery.getData().split(":")[1]);
+        WorkoutExercise workoutExercise = workoutExerciseService.getById(Long.valueOf(callbackQuery.getData().split(":")[1]));
+        workoutExerciseService.moveUp(Long.valueOf(callbackQuery.getData().split(":")[1]));
         return workoutDayMessageGenerator.getSelectWorkoutDayEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), workoutExercise.getWorkoutDay().getId());
     }
 
     private EditMessageText moveDown(CallbackQuery callbackQuery){
-        workoutExerciseService.moveDown(callbackQuery.getData().split(":")[1]);
-        WorkoutExercise workoutExercise = workoutExerciseService.getById(callbackQuery.getData().split(":")[1]);
+        workoutExerciseService.moveDown(Long.valueOf(callbackQuery.getData().split(":")[1]));
+        WorkoutExercise workoutExercise = workoutExerciseService.getById(Long.valueOf(callbackQuery.getData().split(":")[1]));
         return workoutDayMessageGenerator.getSelectWorkoutDayEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), workoutExercise.getWorkoutDay().getId());
     }
 
@@ -123,8 +123,8 @@ public class WorkoutExerciseCallbackQueryHandler implements CallbackQueryHandler
     }
 
     private EditMessageText handleDelete(CallbackQuery callbackQuery) {
-        WorkoutExercise workoutExercise = workoutExerciseService.getById(callbackQuery.getData().split(":")[1]);
-        String workoutDayId = workoutExercise.getWorkoutDay().getId();
+        WorkoutExercise workoutExercise = workoutExerciseService.getById(Long.valueOf(callbackQuery.getData().split(":")[1]));
+        Long workoutDayId = workoutExercise.getWorkoutDay().getId();
         workoutExerciseService.deleteById(workoutExercise.getId());
 
         return workoutDayMessageGenerator.getSelectWorkoutDayEditMessage(callbackQuery.getFrom().getId().toString(), callbackQuery.getMessage().getMessageId(), workoutDayId);

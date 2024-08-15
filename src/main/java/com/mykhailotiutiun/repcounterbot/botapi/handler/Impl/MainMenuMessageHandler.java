@@ -3,10 +3,10 @@ package com.mykhailotiutiun.repcounterbot.botapi.handler.Impl;
 import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
 import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.exception.EntityAlreadyExistsException;
-import com.mykhailotiutiun.repcounterbot.model.User;
-import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
+import com.mykhailotiutiun.repcounterbot.model.User;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
+import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -47,6 +47,7 @@ public class MainMenuMessageHandler implements MessageHandler {
             userService.create(User.builder()
                     .id(message.getFrom().getId())
                     .username(message.getFrom().getFirstName())
+                    .localTag("en_EN")
                     .build());
         } catch (EntityAlreadyExistsException ignored) {
         }

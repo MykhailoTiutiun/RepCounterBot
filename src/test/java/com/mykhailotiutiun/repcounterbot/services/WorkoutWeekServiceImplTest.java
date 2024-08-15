@@ -20,8 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -37,9 +36,6 @@ public class WorkoutWeekServiceImplTest {
     @Mock
     private LocalDateWeekUtil localDateWeekUtil;
 
-    @Mock
-    private LocaleMessageUtil localeMessageUtil;
-
     @InjectMocks
     private WorkoutWeekServiceImpl workoutWeekService;
 
@@ -53,7 +49,7 @@ public class WorkoutWeekServiceImplTest {
     public void testGetCurrentWorkoutWeekByUserId() {
         Long userId = 1L;
 
-        WorkoutWeek expectedWorkoutWeek = WorkoutWeek.builder().id("2").user(User.builder().id(userId).build()).weekEndDate(LocalDate.now()).build();
+        WorkoutWeek expectedWorkoutWeek = WorkoutWeek.builder().id(2L).user(User.builder().id(userId).build()).weekEndDate(LocalDate.now()).build();
         when(workoutWeekRepository.findByUserIdAndCurrent(userId, true)).thenReturn(Optional.of(expectedWorkoutWeek));
         when(localDateWeekUtil.isCurrentWeek(any(), any())).thenReturn(true);
         WorkoutWeek actualWorkoutWeek = workoutWeekService.getCurrentWorkoutWeekByUserId(userId);
@@ -73,7 +69,7 @@ public class WorkoutWeekServiceImplTest {
 
     @Test
     public void testCreateWorkoutWeek() {
-        WorkoutWeek newWorkoutWeek = WorkoutWeek.builder().id("1").weekStartDate(LocalDate.now()).build();
+        WorkoutWeek newWorkoutWeek = WorkoutWeek.builder().id(2L).weekStartDate(LocalDate.now()).build();
 
         workoutWeekService.create(newWorkoutWeek);
 

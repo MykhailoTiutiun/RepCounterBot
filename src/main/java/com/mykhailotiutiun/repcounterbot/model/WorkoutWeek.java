@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class WorkoutWeek {
 
-    private String id;
+    private Long id;
     private User user;
     private Boolean current = true;
     private LocalDate weekStartDate;

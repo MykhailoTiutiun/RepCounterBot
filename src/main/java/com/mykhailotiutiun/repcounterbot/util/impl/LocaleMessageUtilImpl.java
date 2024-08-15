@@ -1,7 +1,7 @@
 package com.mykhailotiutiun.repcounterbot.util.impl;
 
 import com.mykhailotiutiun.repcounterbot.cache.SelectedLanguageCache;
-import com.mykhailotiutiun.repcounterbot.service.UserService;
+import com.mykhailotiutiun.repcounterbot.language.SelectedLanguageProvider;
 import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -13,12 +13,12 @@ public class LocaleMessageUtilImpl implements LocaleMessageUtil {
 
     private final MessageSource messageSource;
     private final SelectedLanguageCache selectedLanguageCache;
-    private final UserService userService;
+    private final SelectedLanguageProvider selectedLanguageProvider;
 
-    public LocaleMessageUtilImpl(MessageSource messageSource, SelectedLanguageCache selectedLanguageCache, UserService userService) {
+    public LocaleMessageUtilImpl(MessageSource messageSource, SelectedLanguageCache selectedLanguageCache, SelectedLanguageProvider selectedLanguageProvider) {
         this.messageSource = messageSource;
         this.selectedLanguageCache = selectedLanguageCache;
-        this.userService = userService;
+        this.selectedLanguageProvider = selectedLanguageProvider;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class LocaleMessageUtilImpl implements LocaleMessageUtil {
     public String getLocalTag(String chatId) {
         String localeTag = selectedLanguageCache.getSelectedLanguage(chatId);
         if (localeTag == null) {
-            localeTag = userService.getById(Long.valueOf(chatId)).getLocalTag();
+            localeTag = selectedLanguageProvider.getLocaleTag(chatId);
             selectedLanguageCache.setSelectedLanguage(chatId, localeTag);
         }
         return localeTag;

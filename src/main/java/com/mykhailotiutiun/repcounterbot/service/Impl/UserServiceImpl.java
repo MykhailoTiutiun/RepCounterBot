@@ -3,13 +3,13 @@ package com.mykhailotiutiun.repcounterbot.service.Impl;
 import com.mykhailotiutiun.repcounterbot.cache.SelectedLanguageCache;
 import com.mykhailotiutiun.repcounterbot.exception.EntityAlreadyExistsException;
 import com.mykhailotiutiun.repcounterbot.exception.EntityNotFoundException;
+import com.mykhailotiutiun.repcounterbot.language.SelectedLanguageProvider;
 import com.mykhailotiutiun.repcounterbot.model.User;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
 import com.mykhailotiutiun.repcounterbot.repository.UserRepository;
 import com.mykhailotiutiun.repcounterbot.service.UserService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import com.mykhailotiutiun.repcounterbot.util.LocalDateWeekUtil;
-import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +18,14 @@ import java.time.LocalDate;
 
 @Slf4j
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, SelectedLanguageProvider {
 
     private final UserRepository userRepository;
     private final WorkoutWeekService workoutWeekService;
     private final LocalDateWeekUtil localDateWeekUtil;
     private final SelectedLanguageCache selectedLanguageCache;
 
-    public UserServiceImpl(UserRepository userRepository, WorkoutWeekService workoutWeekService, LocalDateWeekUtil localDateWeekUtil, LocaleMessageUtil localeMessageUtil, SelectedLanguageCache selectedLanguageCache) {
+    public UserServiceImpl(UserRepository userRepository, WorkoutWeekService workoutWeekService, LocalDateWeekUtil localDateWeekUtil, SelectedLanguageCache selectedLanguageCache) {
         this.userRepository = userRepository;
         this.workoutWeekService = workoutWeekService;
         this.localDateWeekUtil = localDateWeekUtil;
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(Long id) {
-        log.trace("Get User with id: {}", id);
+        log.trace("Get User by id: {}", id);
         return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void create(User user) throws EntityAlreadyExistsException {
         if (userRepository.existsById(user.getId())) {
-            throw new EntityAlreadyExistsException(String.format("User with this id(%d) already exists", user.getId()));
+            throw new EntityAlreadyExistsException(String.format("User with id(%d) already exists", user.getId()));
         }
 
         log.trace("Create User: {}", user);
@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
 
         workoutWeekService.create(WorkoutWeek.builder()
                 .user(user)
+                .current(true)
                 .weekStartDate(localDateWeekUtil.getFirstDateOfWeekFromDate(LocalDate.now()))
                 .weekEndDate(localDateWeekUtil.getLastDateOfWeekFromDate(LocalDate.now()))
                 .build());
@@ -66,11 +67,16 @@ public class UserServiceImpl implements UserService {
     public void setUserLang(Long userId, String localTag) {
         User user = getById(userId);
 
-        log.trace("Set localTag to User: {}", user);
+        log.trace("Set localTag for User: {}", user);
 
         user.setLocalTag(localTag);
         save(user);
         selectedLanguageCache.setSelectedLanguage(String.valueOf(userId), localTag);
     }
 
+    @Override
+    public String getLocaleTag(String chatId) {
+        log.trace("Get User's local-tag by id: {}", chatId);
+        return userRepository.findById(Long.valueOf(chatId)).orElseThrow(EntityNotFoundException::new).getLocalTag();
+    }
 }

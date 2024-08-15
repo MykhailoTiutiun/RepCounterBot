@@ -2,9 +2,7 @@ package com.mykhailotiutiun.repcounterbot.message.impl;
 
 import com.mykhailotiutiun.repcounterbot.message.MainMenuMessageGenerator;
 import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

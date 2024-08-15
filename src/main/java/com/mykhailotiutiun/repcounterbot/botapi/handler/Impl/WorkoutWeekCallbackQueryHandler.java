@@ -3,7 +3,6 @@ package com.mykhailotiutiun.repcounterbot.botapi.handler.Impl;
 import com.mykhailotiutiun.repcounterbot.botapi.handler.CallbackQueryHandler;
 import com.mykhailotiutiun.repcounterbot.constants.CallbackHandlerType;
 import com.mykhailotiutiun.repcounterbot.message.WorkoutWeekMessageGenerator;
-import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;

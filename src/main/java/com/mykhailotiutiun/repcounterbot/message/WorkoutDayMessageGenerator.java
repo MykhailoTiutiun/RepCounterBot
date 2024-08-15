@@ -5,6 +5,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 
 public interface WorkoutDayMessageGenerator {
 
-    SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId);
-    EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, String workoutDayId);
+    SendMessage getSelectWorkoutDaySendMessage(String chatId, Long workoutDayId);
+    EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, Long workoutDayId);
 }

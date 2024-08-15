@@ -5,6 +5,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 
 public interface WorkoutExerciseMessageGenerator {
 
-    SendMessage getWorkoutExerciseSendMessage(String chatId, String workoutExerciseId);
-    EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, String workoutExerciseId, Boolean isOnEditPage);
+    SendMessage getWorkoutExerciseSendMessage(String chatId, Long workoutExerciseId);
+    EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, Long workoutExerciseId, Boolean isOnEditPage);
 }

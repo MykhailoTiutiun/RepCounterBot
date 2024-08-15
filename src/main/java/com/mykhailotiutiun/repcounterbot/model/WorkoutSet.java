@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 public class WorkoutSet {
 
-    private String id;
+    private Long id;
     private Integer number;
     private Integer reps;
     private Integer weight;

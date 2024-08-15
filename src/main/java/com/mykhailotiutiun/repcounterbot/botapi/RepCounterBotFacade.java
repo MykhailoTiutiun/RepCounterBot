@@ -42,8 +42,6 @@ public class RepCounterBotFacade {
         } else {
             return handleMessage(update.getMessage());
         }
-
-
     }
 
     private BotApiMethod<?> handleCallbackQuery(CallbackQuery callbackQuery) {
@@ -100,8 +98,8 @@ public class RepCounterBotFacade {
                 currentBotStateCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
                 return messageHandlers.get(MessageHandlerType.MAIN_MENU_HANDLER);
             }
-            case ("Поточний тиждень тренувань"):
-            case ("Current workout week"): {
+            case ("Поточний тиждень"):
+            case ("Current week"): {
                 currentBotStateCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
                 return messageHandlers.get(MessageHandlerType.CURRENT_WEEK_HANDLER);
             }

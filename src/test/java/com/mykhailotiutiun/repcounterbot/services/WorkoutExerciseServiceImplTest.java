@@ -35,24 +35,25 @@ public class WorkoutExerciseServiceImplTest {
 
     @Test
     public void getById(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").build();
+        Long id = 1L;
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(id).build();
         workoutExercise.setWorkoutSets(new ArrayList<>(List.of(WorkoutSet.builder().number(2).build(), WorkoutSet.builder().number(1).build())));
-        when(workoutExerciseRepository.findById("1")).thenReturn(Optional.of(workoutExercise));
-        assertEquals(workoutExercise, workoutExerciseService.getById("1"));
+        when(workoutExerciseRepository.findById(id)).thenReturn(Optional.of(workoutExercise));
+        assertEquals(workoutExercise, workoutExerciseService.getById(id));
         assertEquals(1, (int) workoutExercise.getWorkoutSets().get(0).getNumber());
         assertEquals(2, (int) workoutExercise.getWorkoutSets().get(1).getNumber());
 
 
-        when(workoutExerciseRepository.findById("1")).thenReturn(Optional.empty());
+        when(workoutExerciseRepository.findById(id)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> {
-            workoutExerciseService.getById("1");
+            workoutExerciseService.getById(id);
         });
     }
 
     @Test
     public void getLatestNumberByWorkoutDay(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").number((byte) 1).build();
-        WorkoutDay workoutDay = WorkoutDay.builder().id("2").build();
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(1L).number((byte) 1).build();
+        WorkoutDay workoutDay = WorkoutDay.builder().id(2L).build();
         when(workoutExerciseRepository.findAllByWorkoutDayOrderByNumberDesc(workoutDay)).thenReturn(List.of(workoutExercise));
         assertEquals(workoutExercise.getNumber(), workoutExerciseService.getLatestNumberByWorkoutDay(workoutDay));
 
@@ -62,8 +63,8 @@ public class WorkoutExerciseServiceImplTest {
 
     @Test
     public void getByNumberAndWorkoutDay(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").number((byte) 1).build();
-        WorkoutDay workoutDay = WorkoutDay.builder().id("2").build();
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(1L).number((byte) 1).build();
+        WorkoutDay workoutDay = WorkoutDay.builder().id(2L).build();
         when(workoutExerciseRepository.findByNumberAndWorkoutDay(workoutExercise.getNumber(), workoutDay)).thenReturn(Optional.of(workoutExercise));
         assertEquals(workoutExercise, workoutExerciseService.getByNumberAndWorkoutDay((byte) 1, workoutDay));
 
@@ -75,16 +76,16 @@ public class WorkoutExerciseServiceImplTest {
 
     @Test
     public void getAllByWorkoutDay(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").number((byte) 1).build();
-        WorkoutDay workoutDay = WorkoutDay.builder().id("2").build();
-        when(workoutExerciseRepository.findAllByWorkoutDay(workoutDay)).thenReturn(List.of(workoutExercise));
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(1L).number((byte) 1).build();
+        WorkoutDay workoutDay = WorkoutDay.builder().id(2L).build();
+        when(workoutExerciseRepository.findAllByWorkoutDayOrderByNumberDesc(workoutDay)).thenReturn(List.of(workoutExercise));
         assertEquals(workoutExercise, workoutExerciseService.getAllByWorkoutDay(workoutDay).get(0));
     }
 
     @Test
     public void create(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").build();
-        WorkoutDay workoutDay = WorkoutDay.builder().id("2").build();
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(1L).build();
+        WorkoutDay workoutDay = WorkoutDay.builder().id(2L).build();
         workoutExercise.setWorkoutDay(workoutDay);
         when(workoutExerciseRepository.findAllByWorkoutDayOrderByNumberDesc(workoutDay)).thenReturn(List.of(WorkoutExercise.builder().number((byte) 1).build()));
         workoutExerciseService.create(workoutExercise);
@@ -94,33 +95,36 @@ public class WorkoutExerciseServiceImplTest {
 
     @Test
     public void createAllFromOldWorkoutDay(){
-        WorkoutDay workoutDay = WorkoutDay.builder().id("1").build();
-        WorkoutDay newWorkoutDay = WorkoutDay.builder().id("2").build();
+        WorkoutDay workoutDay = WorkoutDay.builder().id(1L).build();
+        WorkoutDay newWorkoutDay = WorkoutDay.builder().id(2L).build();
         List<WorkoutExercise> oldWorkoutExercises = new ArrayList<>();
         for (int i = 0; i < 7; i++){
-            oldWorkoutExercises.add(WorkoutExercise.builder().id(String.valueOf(i + 1)).build());
+            oldWorkoutExercises.add(WorkoutExercise.builder().id((long) (i + 1)).build());
         }
-        when(workoutExerciseRepository.findAllByWorkoutDay(workoutDay)).thenReturn(oldWorkoutExercises);
+        when(workoutExerciseRepository.findAllByWorkoutDayOrderByNumberDesc(workoutDay)).thenReturn(oldWorkoutExercises);
         workoutExerciseService.createAllFromOldWorkoutDay(workoutDay, newWorkoutDay);
         verify(workoutExerciseRepository, times(7)).save(any());
     }
 
     @Test
     public void setName(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").workoutSets(new ArrayList<>()).build();
-        when(workoutExerciseRepository.findById("1")).thenReturn(Optional.of(workoutExercise));
-        workoutExerciseService.setName("1", "Name");
+        Long id = 1L;
+        String name = "Name";
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(id).workoutSets(new ArrayList<>()).build();
+        when(workoutExerciseRepository.findById(id)).thenReturn(Optional.of(workoutExercise));
+        workoutExerciseService.setName(id, name);
         verify(workoutExerciseRepository).save(workoutExercise);
-        Assertions.assertEquals(workoutExercise.getName(), "Name");
+        Assertions.assertEquals(workoutExercise.getName(), name);
     }
 
     @Test
     public void moveUp(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").number((byte) 2).workoutSets(new ArrayList<>()).build();
-        WorkoutExercise upperWorkoutExercise = WorkoutExercise.builder().id("1").number((byte) 1).workoutSets(new ArrayList<>()).build();
+        Long id = 1L;
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(id).number((byte) 2).workoutSets(new ArrayList<>()).build();
+        WorkoutExercise upperWorkoutExercise = WorkoutExercise.builder().id(id).number((byte) 1).workoutSets(new ArrayList<>()).build();
         when(workoutExerciseRepository.findById(workoutExercise.getId())).thenReturn(Optional.of(workoutExercise));
         when(workoutExerciseRepository.findByNumberAndWorkoutDay(eq((byte) 1), any())).thenReturn(Optional.of(upperWorkoutExercise));
-        workoutExerciseService.moveUp("1");
+        workoutExerciseService.moveUp(id);
         verify(workoutExerciseRepository).save(workoutExercise);
         verify(workoutExerciseRepository).save(upperWorkoutExercise);
         assertEquals(Byte.valueOf((byte) 1), workoutExercise.getNumber());
@@ -128,22 +132,23 @@ public class WorkoutExerciseServiceImplTest {
 
         when(workoutExerciseRepository.findById(workoutExercise.getId())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> {
-            workoutExerciseService.moveUp("1");
+            workoutExerciseService.moveUp(id);
         });
 
         when(workoutExerciseRepository.findById(workoutExercise.getId())).thenReturn(Optional.of(workoutExercise));
         assertThrows(EntityNotFoundException.class, () -> {
-            workoutExerciseService.moveUp("1");
+            workoutExerciseService.moveUp(id);
         });
     }
 
     @Test
     public void moveDown(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").number((byte) 1).workoutSets(new ArrayList<>()).build();
-        WorkoutExercise lowerWorkoutExercise = WorkoutExercise.builder().id("1").number((byte) 2).workoutSets(new ArrayList<>()).build();
+        Long s = 1L;
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(s).number((byte) 1).workoutSets(new ArrayList<>()).build();
+        WorkoutExercise lowerWorkoutExercise = WorkoutExercise.builder().id(s).number((byte) 2).workoutSets(new ArrayList<>()).build();
         when(workoutExerciseRepository.findById(workoutExercise.getId())).thenReturn(Optional.of(workoutExercise));
         when(workoutExerciseRepository.findByNumberAndWorkoutDay(eq((byte) 2), any())).thenReturn(Optional.of(lowerWorkoutExercise));
-        workoutExerciseService.moveDown("1");
+        workoutExerciseService.moveDown(s);
         verify(workoutExerciseRepository).save(workoutExercise);
         verify(workoutExerciseRepository).save(lowerWorkoutExercise);
         assertEquals(Byte.valueOf((byte) 2), workoutExercise.getNumber());
@@ -151,21 +156,22 @@ public class WorkoutExerciseServiceImplTest {
 
         when(workoutExerciseRepository.findById(workoutExercise.getId())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> {
-            workoutExerciseService.moveDown("1");
+            workoutExerciseService.moveDown(s);
         });
 
         when(workoutExerciseRepository.findById(workoutExercise.getId())).thenReturn(Optional.of(workoutExercise));
         assertThrows(EntityNotFoundException.class, () -> {
-            workoutExerciseService.moveDown("1");
+            workoutExerciseService.moveDown(s);
         });
     }
 
     @Test
     public void addSets(){
-        WorkoutExercise workoutExercise = WorkoutExercise.builder().id("1").workoutSets(new ArrayList<>()).build();
-        List<WorkoutSet> workoutSets = List.of(WorkoutSet.builder().id("1").build(), WorkoutSet.builder().id("2").build());
-        when(workoutExerciseRepository.findById("1")).thenReturn(Optional.of(workoutExercise));
-        workoutExerciseService.addSets("1", workoutSets);
+        Long id = 1L;
+        WorkoutExercise workoutExercise = WorkoutExercise.builder().id(id).workoutSets(new ArrayList<>()).build();
+        List<WorkoutSet> workoutSets = List.of(WorkoutSet.builder().id(id).build(), WorkoutSet.builder().id(2L).build());
+        when(workoutExerciseRepository.findById(id)).thenReturn(Optional.of(workoutExercise));
+        workoutExerciseService.addSets(id, workoutSets);
         verify(workoutSetService, times(2)).save(any());
         verify(workoutExerciseRepository).save(workoutExercise);
         assertEquals(workoutSets, workoutExercise.getWorkoutSets());
@@ -173,7 +179,8 @@ public class WorkoutExerciseServiceImplTest {
 
     @Test
     public void deleteById(){
-        workoutExerciseService.deleteById("1");
-        verify(workoutExerciseRepository).deleteById("1");
+        long id = 1L;
+        workoutExerciseService.deleteById(id);
+        verify(workoutExerciseRepository).deleteById(id);
     }
 }

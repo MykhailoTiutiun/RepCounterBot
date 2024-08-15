@@ -30,7 +30,7 @@ public class WorkoutDayMessageGeneratorImpl implements WorkoutDayMessageGenerato
     }
 
     @Override
-    public SendMessage getSelectWorkoutDaySendMessage(String chatId, String workoutDayId) {
+    public SendMessage getSelectWorkoutDaySendMessage(String chatId, Long workoutDayId) {
         WorkoutDay workoutDay = workoutDayService.getById(workoutDayId);
         SendMessage sendMessage = new SendMessage(chatId, workoutDay.print(localeMessageUtil.getMessage("print.workout-day.is-rest-day", chatId), localeMessageUtil.getMessage("print.workout-day.type-not-set", chatId), localeMessageUtil.getLocalTag(chatId)));
         sendMessage.setReplyMarkup(getInlineKeyboardMarkupForWorkoutDay(workoutDay, workoutExerciseService.getAllByWorkoutDay(workoutDay), chatId));
@@ -39,7 +39,7 @@ public class WorkoutDayMessageGeneratorImpl implements WorkoutDayMessageGenerato
     }
 
     @Override
-    public EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, String workoutDayId) {
+    public EditMessageText getSelectWorkoutDayEditMessage(String chatId, Integer messageId, Long workoutDayId) {
         WorkoutDay workoutDay = workoutDayService.getById(workoutDayId);
         EditMessageText editMessageText = new EditMessageText(workoutDay.print(localeMessageUtil.getMessage("print.workout-day.is-rest-day", chatId), localeMessageUtil.getMessage("print.workout-day.type-not-set", chatId), localeMessageUtil.getLocalTag(chatId)));
         editMessageText.setChatId(chatId);

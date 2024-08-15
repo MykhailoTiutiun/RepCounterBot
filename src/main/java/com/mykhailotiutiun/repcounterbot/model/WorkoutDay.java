@@ -17,11 +17,11 @@ import java.util.Objects;
 @AllArgsConstructor
 public class WorkoutDay {
 
-    private String id;
-    private WorkoutWeek workoutWeek;
+    private Long id;
     private String name;
     private LocalDate date;
     private Boolean isWorkoutDay;
+    private WorkoutWeek workoutWeek;
 
     public Boolean isWorkoutDay() {
         return isWorkoutDay;

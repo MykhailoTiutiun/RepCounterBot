@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,31 +32,36 @@ public class WorkoutDayServiceImplTest {
 
     @Test
     public void testGetWorkoutDayById(){
-        WorkoutDay workoutDay = WorkoutDay.builder().id("1").build();
-        when(workoutDayRepository.findById("1")).thenReturn(Optional.of(workoutDay));
-        assertEquals(workoutDay, workoutDayService.getById("1"));
+        long id = 1L;
+        WorkoutDay workoutDay = WorkoutDay.builder().id(id).build();
+        when(workoutDayRepository.findById(id)).thenReturn(Optional.of(workoutDay));
+        assertEquals(workoutDay, workoutDayService.getById(id));
 
-        when(workoutDayRepository.findById("1")).thenReturn(Optional.empty());
+        when(workoutDayRepository.findById(id)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> {
-            workoutDayService.getById("1");
+            workoutDayService.getById(id);
         });
     }
 
     @Test
     public void testGetAllByWorkoutWeek(){
-        WorkoutWeek workoutWeek = WorkoutWeek.builder().id("1").build();
+        WorkoutWeek workoutWeek = WorkoutWeek.builder().id(1L).build();
 
-        when(workoutDayRepository.findAllByWorkoutWeek(workoutWeek)).thenReturn(List.of(new WorkoutDay()));
-        assertNotNull(workoutDayService.getAllByWorkoutWeek(workoutWeek).get(0));
+        List<WorkoutDay> workoutDays = new ArrayList<>();
+        for (int i = 7; i > 0; i--){
+            workoutDays.add(WorkoutDay.builder().id((long) (i)).date(LocalDate.now().plusDays(i)).build());
+        }
+        when(workoutDayRepository.findAllByWorkoutWeek(workoutWeek)).thenReturn(workoutDays);
+        assertEquals(workoutDays.get(6), workoutDayService.getAllByWorkoutWeek(workoutWeek).get(0));
     }
 
     @Test
     public void testCreateAllFromOldWorkoutWeek(){
-        WorkoutWeek workoutWeek = WorkoutWeek.builder().id("1").build();
-        WorkoutWeek newWorkoutWeek = WorkoutWeek.builder().id("2").weekStartDate(LocalDate.now()).build();
+        WorkoutWeek workoutWeek = WorkoutWeek.builder().id(1L).build();
+        WorkoutWeek newWorkoutWeek = WorkoutWeek.builder().id(2L).weekStartDate(LocalDate.now()).build();
         List<WorkoutDay> oldWorkoutDays = new ArrayList<>();
         for (int i = 0; i < 7; i++){
-            oldWorkoutDays.add(WorkoutDay.builder().id(String.valueOf(i + 1)).build());
+            oldWorkoutDays.add(WorkoutDay.builder().id((long) (i + 1)).date(LocalDate.now().plusDays(i)).build());
         }
         when(workoutDayRepository.findAllByWorkoutWeek(workoutWeek)).thenReturn(oldWorkoutDays);
         workoutDayService.createAllFromOldWorkoutWeek(workoutWeek, newWorkoutWeek);
@@ -66,26 +71,29 @@ public class WorkoutDayServiceImplTest {
 
     @Test
     public void testSave(){
-        WorkoutDay workoutDay = WorkoutDay.builder().id("1").build();
+        WorkoutDay workoutDay = WorkoutDay.builder().id(1L).build();
         workoutDayService.save(workoutDay);
         verify(workoutDayRepository).save(workoutDay);
     }
 
     @Test
     public void setWorkoutDayName(){
-        WorkoutDay workoutDay = WorkoutDay.builder().id("1").build();
-        when(workoutDayRepository.findById("1")).thenReturn(Optional.of(workoutDay));
-        workoutDayService.setName("1", "Name");
+        long id = 1L;
+        String name = "Name";
+        WorkoutDay workoutDay = WorkoutDay.builder().id(id).build();
+        when(workoutDayRepository.findById(id)).thenReturn(Optional.of(workoutDay));
+        workoutDayService.setName(id, name);
         verify(workoutDayRepository).save(workoutDay);
-        assertEquals(workoutDay.getName(), "Name");
+        assertEquals(workoutDay.getName(), name);
         assertTrue(workoutDay.getIsWorkoutDay());
     }
 
     @Test
     public void setRestWorkoutDay(){
-        WorkoutDay workoutDay = WorkoutDay.builder().id("1").build();
-        when(workoutDayRepository.findById("1")).thenReturn(Optional.of(workoutDay));
-        workoutDayService.setRestWorkoutDay("1");
+        long id = 1L;
+        WorkoutDay workoutDay = WorkoutDay.builder().id(id).build();
+        when(workoutDayRepository.findById(id)).thenReturn(Optional.of(workoutDay));
+        workoutDayService.setRestWorkoutDay(id);
         verify(workoutDayRepository).save(workoutDay);
         assertFalse(workoutDay.getIsWorkoutDay());
     }

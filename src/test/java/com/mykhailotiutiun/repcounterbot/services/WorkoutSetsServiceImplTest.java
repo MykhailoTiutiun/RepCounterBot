@@ -21,7 +21,7 @@ public class WorkoutSetsServiceImplTest {
 
     @Test
     public void save(){
-        WorkoutSet workoutSet = WorkoutSet.builder().id("1").build();
+        WorkoutSet workoutSet = WorkoutSet.builder().id(1L).build();
         workoutSetService.save(workoutSet);
         verify(workoutSetRepository).save(workoutSet);
     }

@@ -25,7 +25,7 @@ public class WorkoutExerciseMessageGeneratorImpl implements WorkoutExerciseMessa
     }
 
     @Override
-    public SendMessage getWorkoutExerciseSendMessage(String chatId, String workoutExerciseId) {
+    public SendMessage getWorkoutExerciseSendMessage(String chatId, Long workoutExerciseId) {
         WorkoutExercise workoutExercise = workoutExerciseService.getById(workoutExerciseId);
 
         SendMessage sendMessage = new SendMessage(chatId, workoutExercise.printForWorkoutExercise(localeMessageUtil.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageUtil.getMessage("print.workout-set.pattern", chatId)));
@@ -34,7 +34,7 @@ public class WorkoutExerciseMessageGeneratorImpl implements WorkoutExerciseMessa
     }
 
     @Override
-    public EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, String workoutExerciseId, Boolean isOnEditPage) {
+    public EditMessageText getWorkoutExerciseEditMessage(String chatId, Integer messageId, Long workoutExerciseId, Boolean isOnEditPage) {
         WorkoutExercise workoutExercise = workoutExerciseService.getById(workoutExerciseId);
 
         EditMessageText editMessageText = new EditMessageText(workoutExercise.printForWorkoutExercise(localeMessageUtil.getMessage("print.workout-exercise.for-workout-exercise-reply", chatId), localeMessageUtil.getMessage("print.workout-set.pattern", chatId)));

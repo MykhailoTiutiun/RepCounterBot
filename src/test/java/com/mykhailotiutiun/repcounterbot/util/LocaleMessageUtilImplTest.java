@@ -1,8 +1,7 @@
 package com.mykhailotiutiun.repcounterbot.util;
 
 import com.mykhailotiutiun.repcounterbot.cache.SelectedLanguageCache;
-import com.mykhailotiutiun.repcounterbot.model.User;
-import com.mykhailotiutiun.repcounterbot.service.UserService;
+import com.mykhailotiutiun.repcounterbot.language.SelectedLanguageProvider;
 import com.mykhailotiutiun.repcounterbot.util.impl.LocaleMessageUtilImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +24,7 @@ public class LocaleMessageUtilImplTest {
     @Mock
     private MessageSource messageSource;
     @Mock
-    private UserService userService;
+    private SelectedLanguageProvider selectedLanguageProvider;
     @InjectMocks
     private LocaleMessageUtilImpl localeMessageUtil;
 
@@ -42,7 +41,7 @@ public class LocaleMessageUtilImplTest {
         assertEquals("en-EN", localeMessageUtil.getLocalTag("1"));
 
         when(selectedLanguageCache.getSelectedLanguage("1")).thenReturn(null);
-        when(userService.getById(1L)).thenReturn(User.builder().localTag("en-EN").build());
+        when(selectedLanguageProvider.getLocaleTag("1")).thenReturn("en-EN");
         assertEquals("en-EN", localeMessageUtil.getLocalTag("1"));
         verify(selectedLanguageCache).setSelectedLanguage("1", "en-EN");
     }

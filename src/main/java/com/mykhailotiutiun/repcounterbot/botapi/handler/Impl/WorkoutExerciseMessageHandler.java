@@ -1,9 +1,9 @@
 package com.mykhailotiutiun.repcounterbot.botapi.handler.Impl;
 
 import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
-import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
 import com.mykhailotiutiun.repcounterbot.cache.CurrentBotStateCache;
 import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutDayCache;
+import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
 import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.message.WorkoutDayMessageGenerator;
@@ -54,17 +54,17 @@ public class WorkoutExerciseMessageHandler implements MessageHandler {
 
         workoutExerciseService.create(WorkoutExercise.builder()
                 .name(message.getText())
-                .workoutDay(workoutDayService.getById(selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString())))
+                .workoutDay(workoutDayService.getById(Long.valueOf(selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString()))))
                 .build());
 
-        return workoutDayMessageGenerator.getSelectWorkoutDaySendMessage(message.getChatId().toString(), selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString()));
+        return workoutDayMessageGenerator.getSelectWorkoutDaySendMessage(message.getChatId().toString(), Long.valueOf(selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString())));
     }
 
     private SendMessage handleChangeName(Message message){
         currentBotStateCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
 
-        workoutExerciseService.setName(selectedWorkoutExerciseCache.getSelectedWorkoutExercise(message.getChatId().toString()), message.getText());
+        workoutExerciseService.setName(Long.valueOf(selectedWorkoutExerciseCache.getSelectedWorkoutExercise(message.getChatId().toString())), message.getText());
 
-        return workoutDayMessageGenerator.getSelectWorkoutDaySendMessage(message.getChatId().toString(), selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString()));
+        return workoutDayMessageGenerator.getSelectWorkoutDaySendMessage(message.getChatId().toString(), Long.valueOf(selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString())));
     }
 }

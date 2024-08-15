@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface WorkoutDayRepository {
 
-    Optional<WorkoutDay> findById(String id);
-    List<WorkoutDay> findAllByWorkoutWeek(WorkoutWeek WorkoutWeek);
+    Optional<WorkoutDay> findById(Long id);
+    List<WorkoutDay> findAllByWorkoutWeek(WorkoutWeek workoutWeek);
 
     WorkoutDay save(WorkoutDay workoutDay);
 }

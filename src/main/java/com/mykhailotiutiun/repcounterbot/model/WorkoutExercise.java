@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class WorkoutExercise {
 
-    private String id;
+    private Long id;
     private Byte number;
     private String name;
     private WorkoutDay workoutDay;

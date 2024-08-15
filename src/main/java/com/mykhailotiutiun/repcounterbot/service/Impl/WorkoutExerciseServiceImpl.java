@@ -7,16 +7,10 @@ import com.mykhailotiutiun.repcounterbot.model.WorkoutSet;
 import com.mykhailotiutiun.repcounterbot.repository.WorkoutExerciseRepository;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutExerciseService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutSetService;
-import com.mykhailotiutiun.repcounterbot.util.LocaleMessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,17 +20,15 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     private final WorkoutExerciseRepository workoutExerciseRepository;
     private final WorkoutSetService workoutSetService;
-    private final LocaleMessageUtil localeMessageUtil;
 
 
-    public WorkoutExerciseServiceImpl(WorkoutExerciseRepository workoutExerciseRepository, WorkoutSetService workoutSetService, LocaleMessageUtil localeMessageUtil) {
+    public WorkoutExerciseServiceImpl(WorkoutExerciseRepository workoutExerciseRepository, WorkoutSetService workoutSetService) {
         this.workoutExerciseRepository = workoutExerciseRepository;
         this.workoutSetService = workoutSetService;
-        this.localeMessageUtil = localeMessageUtil;
     }
 
     @Override
-    public WorkoutExercise getById(String id) {
+    public WorkoutExercise getById(Long id) {
         log.trace("Get WorkoutExercise by id: {}", id);
         return sortWorkoutSetsInWorkoutExercise(workoutExerciseRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
@@ -67,7 +59,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     @Override
     public List<WorkoutExercise> getAllByWorkoutDay(WorkoutDay workoutDay) {
         log.trace("Get WorkoutExercises by WorkoutDay: {}", workoutDay);
-        return workoutExerciseRepository.findAllByWorkoutDay(workoutDay);
+        return workoutExerciseRepository.findAllByWorkoutDayOrderByNumberDesc(workoutDay);
     }
 
     @Override
@@ -103,7 +95,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     @Override
     @Transactional
-    public void setName(String workoutExerciseId, String name){
+    public void setName(Long workoutExerciseId, String name){
         WorkoutExercise workoutExercise = getById(workoutExerciseId);
         log.trace("Set name WorkoutExercise: {}, {}", workoutExercise, name);
 
@@ -113,7 +105,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     @Override
     @Transactional
-    public void moveUp(String workoutExerciseId){
+    public void moveUp(Long workoutExerciseId){
         WorkoutExercise workoutExercise = getById(workoutExerciseId);
         log.trace("Move up WorkoutExercise: {}", workoutExercise);
 
@@ -127,7 +119,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     @Override
     @Transactional
-    public void moveDown(String workoutExerciseId){
+    public void moveDown(Long workoutExerciseId){
         WorkoutExercise workoutExercise = getById(workoutExerciseId);
         log.trace("Move down WorkoutExercise: {}", workoutExercise);
 
@@ -140,7 +132,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     @Override
     @Transactional
-    public void addSets(String workoutExerciseId, List<WorkoutSet> workoutSets) {
+    public void addSets(Long workoutExerciseId, List<WorkoutSet> workoutSets) {
         WorkoutExercise workoutExercise = getById(workoutExerciseId);
         log.trace("Add WorkoutSets to WorkoutExercise: {}, {}", workoutExercise, workoutSets);
 
@@ -151,7 +143,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         log.trace("Delete WorkoutExercise with id: {}", id);
         workoutExerciseRepository.deleteById(id);
     }

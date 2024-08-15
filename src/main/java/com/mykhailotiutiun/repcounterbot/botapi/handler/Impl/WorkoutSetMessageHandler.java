@@ -1,8 +1,8 @@
 package com.mykhailotiutiun.repcounterbot.botapi.handler.Impl;
 
 import com.mykhailotiutiun.repcounterbot.botapi.handler.MessageHandler;
-import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
 import com.mykhailotiutiun.repcounterbot.cache.CurrentBotStateCache;
+import com.mykhailotiutiun.repcounterbot.cache.SelectedWorkoutExerciseCache;
 import com.mykhailotiutiun.repcounterbot.constants.ChatState;
 import com.mykhailotiutiun.repcounterbot.constants.MessageHandlerType;
 import com.mykhailotiutiun.repcounterbot.message.WorkoutExerciseMessageGenerator;
@@ -57,8 +57,8 @@ public class WorkoutSetMessageHandler implements MessageHandler {
         }
 
         String chatId = message.getChatId().toString();
-        workoutExerciseService.addSets(selectedWorkoutExerciseCache.getSelectedWorkoutExercise(chatId), workoutSets);
+        workoutExerciseService.addSets(Long.valueOf(selectedWorkoutExerciseCache.getSelectedWorkoutExercise(chatId)), workoutSets);
 
-        return workoutExerciseMessageGenerator.getWorkoutExerciseSendMessage(chatId, selectedWorkoutExerciseCache.getSelectedWorkoutExercise(chatId));
+        return workoutExerciseMessageGenerator.getWorkoutExerciseSendMessage(chatId, Long.valueOf(selectedWorkoutExerciseCache.getSelectedWorkoutExercise(chatId)));
     }
 }

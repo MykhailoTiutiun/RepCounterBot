@@ -16,14 +16,12 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public class WorkoutDayMessageHandler implements MessageHandler {
 
     private final WorkoutDayService workoutDayService;
-    private final WorkoutWeekService workoutWeekService;
     private final CurrentBotStateCache currentBotStateCache;
     private final SelectedWorkoutDayCache selectedWorkoutDayCache;
     private final WorkoutWeekMessageGenerator workoutWeekMessageGenerator;
 
-    public WorkoutDayMessageHandler(WorkoutDayService workoutDayService, WorkoutWeekService workoutWeekService, CurrentBotStateCache currentBotStateCache, SelectedWorkoutDayCache selectedWorkoutDayCache, WorkoutWeekMessageGenerator workoutWeekMessageGenerator) {
+    public WorkoutDayMessageHandler(WorkoutDayService workoutDayService, CurrentBotStateCache currentBotStateCache, SelectedWorkoutDayCache selectedWorkoutDayCache, WorkoutWeekMessageGenerator workoutWeekMessageGenerator) {
         this.workoutDayService = workoutDayService;
-        this.workoutWeekService = workoutWeekService;
         this.currentBotStateCache = currentBotStateCache;
         this.selectedWorkoutDayCache = selectedWorkoutDayCache;
         this.workoutWeekMessageGenerator = workoutWeekMessageGenerator;
@@ -31,7 +29,7 @@ public class WorkoutDayMessageHandler implements MessageHandler {
 
     @Override
     public BotApiMethod<?> handleMessage(Message message) {
-        workoutDayService.setName(selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString()), message.getText());
+        workoutDayService.setName(Long.valueOf(selectedWorkoutDayCache.getSelectedWorkoutDay(message.getChatId().toString())), message.getText());
 
         currentBotStateCache.setChatDataCurrentBotState(message.getChatId().toString(), ChatState.MAIN_MENU);
         return workoutWeekMessageGenerator.getCurrentWorkoutWeekSendMessage(message.getChatId().toString());
