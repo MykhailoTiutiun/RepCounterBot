@@ -1,48 +1,41 @@
 package com.mykhailotiutiun.repcounterbot.services;
 
-import com.mykhailotiutiun.repcounterbot.cache.ChatDataCache;
+import com.mykhailotiutiun.repcounterbot.cache.SelectedLanguageCache;
+import com.mykhailotiutiun.repcounterbot.exception.EntityAlreadyExistsException;
+import com.mykhailotiutiun.repcounterbot.exception.EntityNotFoundException;
 import com.mykhailotiutiun.repcounterbot.model.User;
 import com.mykhailotiutiun.repcounterbot.model.WorkoutWeek;
 import com.mykhailotiutiun.repcounterbot.repository.UserRepository;
 import com.mykhailotiutiun.repcounterbot.service.Impl.UserServiceImpl;
-import com.mykhailotiutiun.repcounterbot.service.LocalDateWeekService;
 import com.mykhailotiutiun.repcounterbot.service.WorkoutWeekService;
+import com.mykhailotiutiun.repcounterbot.util.LocalDateWeekUtil;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
-
 
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private WorkoutWeekService workoutWeekService;
-
     @Mock
-    private LocalDateWeekService localDateWeekService;
-
+    private LocalDateWeekUtil localDateWeekUtil;
     @Mock
-    private ChatDataCache chatDataCache;
-
+    private SelectedLanguageCache selectedLanguageCache;
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -54,59 +47,45 @@ public class UserServiceImplTest {
     @Test
     public void testGetUserById() {
         Long userId = 1L;
-        User expectedUser = new User(userId, "John Doe");
-
+        User expectedUser = User.builder().id(userId).build();
         when(userRepository.findById(userId)).thenReturn(Optional.of(expectedUser));
-
-        User actualUser = userService.getUserById(userId);
-
+        User actualUser = userService.getById(userId);
         assertEquals(expectedUser, actualUser);
-    }
 
-    @Test
-    public void testGetAllUsers() {
-        List<User> expectedUsers = Collections.singletonList(new User(1L, "Alice"));
-
-        when(userRepository.findAll()).thenReturn(expectedUsers);
-
-        List<User> actualUsers = userService.getAllUsers();
-
-        assertEquals(expectedUsers, actualUsers);
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> {
+            userService.getById(2L);
+        });
     }
 
     @Test
     public void testCreateUser() {
-        User newUser = new User(2L, "Bob");
-
+        User newUser = User.builder().id(1L).build();
         when(userRepository.existsById(newUser.getId())).thenReturn(false);
-
         userService.create(newUser);
 
         verify(userRepository).save(newUser);
         verify(workoutWeekService).create(any(WorkoutWeek.class));
+
+        when(userRepository.existsById(newUser.getId())).thenReturn(true);
+
+        assertThrows(EntityAlreadyExistsException.class, () -> {
+            userService.create(newUser);
+        });
     }
 
     @Test
     public void testSetUserLang() {
-        String userId = "3";
+        Long userId = 3L;
         String localTag = "en_US";
 
-        User user = new User(Long.valueOf(userId), "Eva");
+        User user = User.builder().id(1L).build();
 
-        when(userRepository.findById(Long.valueOf(userId))).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         userService.setUserLang(userId, localTag);
 
         verify(userRepository).save(user);
-        verify(chatDataCache).setUserSelectedLanguage(userId, localTag);
-    }
-
-    @Test
-    public void testDeleteUserById() {
-        Long userId = 4L;
-
-        userService.deleteById(userId);
-
-        verify(userRepository).deleteById(userId);
+        verify(selectedLanguageCache).setSelectedLanguage(String.valueOf(userId), localTag);
     }
 }

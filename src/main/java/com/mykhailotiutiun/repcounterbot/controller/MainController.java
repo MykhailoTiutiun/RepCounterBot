@@ -10,11 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @RestController
-public class WebhookController {
+public class MainController {
 
     private final RepCounterBot repCounterBot;
 
-    public WebhookController(RepCounterBot repCounterBot) {
+    public MainController(RepCounterBot repCounterBot) {
         this.repCounterBot = repCounterBot;
     }
 
